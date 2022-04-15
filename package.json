@@ -1,0 +1,54 @@
+{
+  "name": "noteApp",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@react-native-community/async-storage": "^1.12.1",
+    "@react-navigation/bottom-tabs": "^6.3.1",
+    "@react-navigation/native": "^6.0.10",
+    "@react-navigation/stack": "^6.2.1",
+    "babel-plugin-root-import": "^6.6.0",
+    "easy-peasy": "^5.0.4",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "eventemitter3": "^4.0.7",
+    "i18n-js": "^3.9.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.2",
+    "react": "17.0.2",
+    "react-mindmap": "^2.1.6",
+    "react-native": "0.68.0",
+    "react-native-config": "^1.4.5",
+    "react-native-device-info": "^8.7.0",
+    "react-native-gesture-handler": "^2.3.2",
+    "react-native-modalbox": "^2.0.2",
+    "react-native-responsive-screen": "^1.4.2",
+    "react-native-safe-area-context": "^4.2.4",
+    "react-native-snap-carousel": "^3.9.1",
+    "react-native-svg-transformer": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/runtime": "^7.17.9",
+    "@react-native-community/eslint-config": "^3.0.1",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^27.5.1",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-react": "^7.29.4",
+    "jest": "^27.5.1",
+    "metro-react-native-babel-preset": "^0.70.1",
+    "react-test-renderer": "17.0.2"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
