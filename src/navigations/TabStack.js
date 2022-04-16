@@ -1,16 +1,28 @@
 import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Animated,
+  Text,
+  Image,
+} from 'react-native';
+import { CurvedBottomBar } from 'react-native-curved-bottom-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { NavNoteIcon, NavPlusIcon, NavTaskIcon } from '../assets/images';
 import { AppDefaultTheme } from '../contexts/theme/AppTheme';
-import TempTestScreen from '../screens/TempTestScreen';
 import Route from './Route';
 import useLocalization from '~src/contexts/i18n';
 // import useAppTheme from '~src/contexts/theme';
-import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
+import { BlurView } from '@react-native-community/blur';
+import { Typography } from '~src/styles';
+import NoteScreen from '../screens/Note/NoteScreen';
+import TaskScreen from '../screens/Task/TaskScreen';
+import HomeScreen from '../screens/Common/HomeScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,153 +30,87 @@ export const TabStack = (props) => {
   const insets = useSafeAreaInsets();
   const { locale, t } = useLocalization();
 
-  const tab1Title = 'History';
-  const tab2Title = 'Wishlist';
-  const tab3Title = 'Home';
-  const tab4Title = 'Message';
-  const tab5Title = 'Profile';
-
   const TAB1 = 'TAB1';
   const TAB2 = 'TAB2';
   const TAB3 = 'TAB3';
-  const TAB4 = 'TAB4';
-  const TAB5 = 'TAB5';
 
   const theme = AppDefaultTheme.settings;
 
   const styles = getStyle(insets, theme);
 
-  const getTabBarLabel = (focused, label) => {
+  const renderTabBar = ({ routeName, selectedTab, navigate }) => {
     return (
-      <Text
-        style={
-          focused ? styles.tabBarLabelFocused : styles.tabBarLabelNonFocused
-        }>
-        {label}
-      </Text>
+      <TouchableOpacity
+        onPress={() => navigate(routeName)}
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        {getTabBarIcon(routeName, selectedTab)}
+      </TouchableOpacity>
     );
   };
 
-  const getTabBarProfileLabel = (focused, label) => {
-    return (
-      <View style={{ paddingBottom: sw(16) }}>
-        <Text
-          style={
-            focused
-              ? styles.tabBarProfileLabelFocused
-              : styles.tabBarProfileLabelNonFocused
-          }>
-          {label}
-        </Text>
-      </View>
-    );
+  const getTabBarIcon = (routeName, selectedTab) => {
+    let icon;
+    switch (routeName) {
+      case Route.TASK_SCREEN:
+        icon = (
+          <NavTaskIcon fill={selectedTab !== routeName ? '#CCCCCC' : '#FFF'} />
+        );
+        break;
+      case Route.NOTE_SCREEN:
+        icon = (
+          <NavNoteIcon fill={selectedTab !== routeName ? '#CCCCCC' : '#FFF'} />
+        );
+        break;
+      default:
+        break;
+    }
+    return <View style={[styles.tabIconContainer]}>{icon}</View>;
   };
-
-  // const getTabBarIcon = (focused, type) => {
-  //   let icon;
-  //   switch (type) {
-  //     case TAB1:
-  //       icon = <NavHistoryIcon fill={focused ? '#DAC9EF' : '#C4C4C4'} />;
-  //       break;
-
-  //     case TAB2:
-  //       icon = <NavWishListIcon fill={focused ? '#DAC9EF' : '#C4C4C4'} />;
-  //       break;
-
-  //     case TAB3:
-  //       icon = (
-  //         <NavHomeIcon
-  //           fill={focused ? '#DAC9EF' : '#C4C4C4'}
-  //           stroke={focused ? '#DAC9EF' : '#C4C4C4'}
-  //         />
-  //       );
-  //       break;
-
-  //     case TAB4:
-  //       icon = <NavMessageIcon fill={focused ? '#DAC9EF' : '#C4C4C4'} />;
-  //       break;
-  //     case TAB5:
-  //       icon = <NavProfileIcon fill={focused ? '#DAC9EF' : '#C4C4C4'} />;
-  //       break;
-
-  //     default:
-  //       break;
-  //   }
-
-  //   return type !== TAB3 ? (
-  //     <View style={[styles.tabIconContainer]}>{icon}</View>
-  //   ) : (
-  //     <View style={[styles.circleView]}>{icon}</View>
-  //   );
-  // };
 
   return (
     <View style={{ flex: 1 }}>
       {console.log('tab staclk now')}
-      <Tab.Navigator
-        initialRouteName={Route.TAB_STACK}
-        backBehavior="initialRoute"
-        shifting={false}
-        tabBarVisible={false}
-        // tabBar={(props) => <TabBar {...props} />}
-        tabBarOptions={{
-          keyboardHidesTabBar: true,
-          headerShown: false,
-          tabBarActiveTintColor: '#357CB6',
-          tabBarInactiveTintColor: '#6A7991',
-          tabBarStyle: [
-            {
-              position: 'absolute',
-              height: sw(102),
-              borderTopRightRadius: sw(10),
-              borderTopLeftRadius: sw(10),
-              shadowOpacity: 0.8,
-              shadowRadius: 10.0,
-              shadowOffset: { 0: 15 },
-              backgroundColor: '#352E41',
-              borderTopWidth: 0,
-              elevation: 50,
-            },
-            null,
-          ],
-        }}
-        screenOptions={{
-          headerShown: false,
-          tarBarHideKeyboard: true,
-          tabBarActiveTintColor: '#357CB6',
-          tabBarInactiveTintColor: '#6A7991',
-          tabBarStyle: [
-            {
-              position: 'absolute',
-              height: sw(102),
-              borderTopRightRadius: sw(10),
-              borderTopLeftRadius: sw(10),
-              shadowOpacity: 0.8,
-              shadowRadius: 10.0,
-              shadowOffset: { 0: 15 },
-              backgroundColor: '#352E41',
-              borderTopWidth: 0,
-              elevation: 50,
-            },
-            null,
-          ],
-        }}>
-        <Tab.Screen
-          name={Route.TEMP_TEST_SCREEN}
-          component={TempTestScreen}
-          options={{
-            tabBarLabel: ({ focused, color, size }) => {
-              return getTabBarLabel(focused, tab2Title);
-            },
-            // tabBarIcon: ({ focused, color, size }) => {
-            //   return getTabBarIcon(focused, TAB2);
-            // },
-          }}
-          listeners={() => ({
-            tabPress: (event) => {},
-          })}
+      <CurvedBottomBar.Navigator
+        style={styles.bottomBar}
+        strokeWidth={0}
+        height={sw(106)}
+        circleWidth={sw(50)}
+        bgColor="#3A3A3E99"
+        initialRouteName={Route.HOME_SCREEN}
+        borderTopLeftRight
+        renderCircle={({ selectedTab, navigate }) => (
+          <Animated.View style={styles.btnCircle}>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+              }}
+              onPress={() => navigate(Route.HOME_SCREEN)}>
+              <NavPlusIcon />
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+        tabBar={renderTabBar}>
+        <CurvedBottomBar.Screen
+          name={Route.TASK_SCREEN}
+          position="left"
+          component={TaskScreen}
         />
-      </Tab.Navigator>
+        <CurvedBottomBar.Screen
+          name={Route.HOME_SCREEN}
+          component={HomeScreen}
+          position="center"
+        />
+        <CurvedBottomBar.Screen
+          name={Route.NOTE_SCREEN}
+          component={NoteScreen}
+          position="right"
+        />
+      </CurvedBottomBar.Navigator>
     </View>
   );
 };
@@ -172,48 +118,43 @@ export const TabStack = (props) => {
 const getStyle = (insets, theme) => {
   return StyleSheet.create({
     tabIconContainer: {
-      width: 42,
+      width: sw(42),
       height: 38,
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
     },
-    tabBarLabelFocused: {
-      ...Typography.ts(theme.fonts.weight.bold, theme.fonts.size.note2),
-      color: '#DAC9EF',
-      marginTop: sw(-13),
-      marginBottom: Platform.OS === 'android' ? sw(20) : null,
+    btnCircle: {
+      width: 0,
+      height: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: sw(10),
+      bottom: sw(10),
     },
-    tabBarLabelNonFocused: {
-      ...Typography.ts(theme.fonts.weight.regular, theme.fonts.size.note2),
-      color: '#C4C4C4',
-      marginTop: sw(-13),
-      marginBottom: Platform.OS === 'android' ? sw(20) : null,
-    },
-    tabBarProfileLabelFocused: {
-      ...Typography.ts(theme.fonts.weight.bold, theme.fonts.size.para),
-      color: '#DAC9EF',
-      marginBottom: Platform.OS === 'android' ? sw(20) : null,
-    },
-    tabBarProfileLabelNonFocused: {
-      ...Typography.ts(theme.fonts.weight.regular, theme.fonts.size.para),
-      color: '#C4C4C4',
-      marginBottom: Platform.OS === 'android' ? sw(20) : null,
-    },
-    circleView: {
+    absolute: {
       position: 'absolute',
-      bottom: Platform.OS === 'android' ? sw(1) : sw(-3),
-      width: sw(78),
-      height: sw(78),
-      backgroundColor: '#352E41',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+    },
+    roundImage: {
+      height: 200,
+      width: 200,
+    },
+    container: {
       justifyContent: 'center',
       alignItems: 'center',
-      borderRadius: sw(39),
-      borderBottomWidth: 0,
-      shadowOpacity: 0.3,
-      shadowRadius: 5.0,
-      shadowOffset: { width: 0, height: -6 },
-      elevation: 20,
+      flex: 1,
+    },
+    roundImageBackground: {
+      backgroundColor: 'white',
+      height: 300,
+      width: 300,
+      borderRadius: 150,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   });
 };

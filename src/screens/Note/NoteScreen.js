@@ -1,0 +1,36 @@
+import React from 'react';
+
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import useLocalization from '~src/contexts/i18n';
+import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
+import { Typography } from '~src/styles';
+import { sw } from '~src/styles/Mixins';
+
+const NoteScreen = ({ navigation }) => {
+  const { t, locale, setLocale } = useLocalization();
+  const theme = AppDefaultTheme.settings;
+  const styles = getStyle(theme);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Note Screen</Text>
+    </View>
+  );
+};
+
+const getStyle = (theme) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    text: {
+      ...Typography.ts(theme.fonts.weight.bold, sw(45)),
+      color: '#000',
+    },
+  });
+};
+
+export default NoteScreen;

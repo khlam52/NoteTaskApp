@@ -3,6 +3,10 @@ const Route = {
 
   TAB_STACK: 'TAB_STACK',
   MAIN_STACK: 'MAIN_STACK',
+
+  HOME_SCREEN: 'HOME_SCREEN',
+  NOTE_SCREEN: 'NOTE_SCREEN',
+  TASK_SCREEN: 'TASK_SCREEN',
 };
 
 export default Route;

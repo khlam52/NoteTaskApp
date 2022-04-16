@@ -8,8 +8,11 @@ import DeviceInfo from 'react-native-device-info';
 
 import TempTestScreen from '../screens/TempTestScreen';
 import Route from './Route';
-import {TabStack} from './TabStack';
+import { TabStack } from './TabStack';
 import useAppContext from '~src/contexts/app';
+import HomeScreen from '../screens/Common/HomeScreen';
+import NoteScreen from '../screens/Note/NoteScreen';
+import TaskScreen from '../screens/Task/TaskScreen';
 
 const Stack = createStackNavigator();
 let deviceBrand = DeviceInfo.getBrand();
@@ -27,10 +30,13 @@ const authScreens = {};
 // Post login Screens
 const postLoginScreens = {};
 postLoginScreens[Route.TAB_STACK] = TabStack;
+postLoginScreens[Route.HOME_SCREEN] = HomeScreen;
+postLoginScreens[Route.NOTE_SCREEN] = NoteScreen;
+postLoginScreens[Route.TASK_SCREEN] = TaskScreen;
 
 export const MainStack = () => {
   // const isLoggedIn = useStoreState((state) => state.user.isLoggedIn);
-  const {isFinishLaunching, setIsFinishLaunching} = useAppContext();
+  const { isFinishLaunching, setIsFinishLaunching } = useAppContext();
 
   const getInitialRouteName = () => {
     if (isFinishLaunching) {
@@ -40,7 +46,7 @@ export const MainStack = () => {
     }
   };
 
-  const getScreenCardStyleInterpolator = name => {
+  const getScreenCardStyleInterpolator = (name) => {
     switch (name) {
       case Route.TAB_STACK:
         return CardStyleInterpolators.forNoAnimation;
