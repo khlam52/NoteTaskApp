@@ -11,15 +11,15 @@ import {
 } from 'react-native';
 // import { Platform, Text, TextInput, View, StyleSheet } from 'react-native';
 
-import {BackIcon} from '../assets/images';
-import {AppDefaultTheme} from '../contexts/theme/AppTheme';
+import { BackIcon } from '../assets/images';
+import { AppDefaultTheme } from '../contexts/theme/AppTheme';
 import AppFocusAwareStatusBar from './AppFocusAwareStatusBar';
 // import { withAllContext } from '~src/contexts/withAllContext';
 import AppPressable from './AppPressable';
 import RootNavigation from '~src/navigations/RootNavigation';
-import {Typography} from '~src/styles';
+import { Typography } from '~src/styles';
 // import { Typography } from '~src/styles';
-import {sw} from '~src/styles/Mixins';
+import { sw } from '~src/styles/Mixins';
 // import CommonUtil from '~src/utils/CommonUtil';
 
 const BaseHeader = ({
@@ -34,8 +34,8 @@ const BaseHeader = ({
 }) => {
   const theme = AppDefaultTheme.settings;
   console.log('BaseHeader -> isTransparent : ', isTransparent);
-  const styles = getStyle(theme, {...props, isTransparent: isTransparent});
-  const headerBackgroundColor = isBackgroundTransparent ? '#252536' : '#352E41';
+  const styles = getStyle(theme, { ...props, isTransparent: isTransparent });
+  const headerBackgroundColor = '#1B191E';
 
   const headerTextColor = '#FFF';
   return (
@@ -116,7 +116,7 @@ const BaseHeader = ({
 };
 const getStyle = (theme, props) => {
   // console.log('BaseHeader -> getStyle : ', theme);
-  const {StatusBarManager} = NativeModules;
+  const { StatusBarManager } = NativeModules;
   return StyleSheet.create({
     safeArea: {},
     container: {
@@ -127,7 +127,7 @@ const getStyle = (theme, props) => {
       paddingTop: sw(12),
       paddingBottom: sw(18),
       ...(!props.isTransparent && Platform.OS === 'android'
-        ? {marginTop: StatusBarManager.HEIGHT}
+        ? { marginTop: StatusBarManager.HEIGHT }
         : null),
     },
     titleContainer: {
