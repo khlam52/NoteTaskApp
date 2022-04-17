@@ -55,10 +55,6 @@ const NoteScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <BaseHeader notShowBackIcon={true} />
       <View style={styles.container}>
-        <View style={styles.settingView}>
-          <SettingIcon />
-        </View>
-
         <Text style={styles.text}>Notes</Text>
         <FlatList
           data={NoteList}

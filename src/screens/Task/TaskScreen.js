@@ -70,10 +70,6 @@ const TaskScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <BaseHeader notShowBackIcon={true} />
       <View style={styles.container}>
-        <View style={styles.settingView}>
-          <SettingIcon />
-        </View>
-
         <Text style={styles.text}>Tasks</Text>
 
         <SectionList

@@ -29,7 +29,7 @@ const HomeScreen = ({ navigation }) => {
         {icon}
         <View style={styles.btnView}>
           <View style={styles.plusIconView}>
-            <PlusIcon />
+            <PlusIcon fill={'#FFF'} />
           </View>
           <Text style={styles.btnTitleText}>{title}</Text>
         </View>
@@ -40,9 +40,6 @@ const HomeScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <BaseHeader notShowBackIcon={true} />
       <View style={styles.container}>
-        <View style={styles.settingView}>
-          <SettingIcon />
-        </View>
         <Text style={styles.text}>Note Space</Text>
         {renderCreateItemView('Create Task', <CreateTaskIcon />)}
         {renderCreateItemView('Create Note', <CreateNoteIcon />)}
@@ -62,6 +59,7 @@ const getStyle = (theme) => {
       ...Typography.ts(theme.fonts.weight.bold, sw(45)),
       color: '#FFF',
       textAlign: 'center',
+      marginBottom: sw(30),
     },
     settingView: {
       marginTop: sw(12),
