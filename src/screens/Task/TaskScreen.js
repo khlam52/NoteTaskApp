@@ -9,6 +9,7 @@ import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
+import _ from 'lodash';
 
 const TaskScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -21,11 +22,38 @@ const TaskScreen = ({ navigation }) => {
       data: [
         {
           title: 'Completed task 1',
+          node: 1,
           subTask: [],
         },
         {
           title: 'Completed task 2',
+          node: 1,
           subTask: ['Completed task 2.1', 'Completed task 2.2'],
+        },
+        {
+          title: 'Completed task 2.1',
+          node: 2,
+          subTask: ['Completed task 2.1.1', 'Completed task 2.1.2'],
+        },
+        {
+          title: 'Completed task 2.2',
+          node: 2,
+          subTask: ['Completed task 2.2.1'],
+        },
+        {
+          title: 'Completed task 2.1.1',
+          node: 3,
+          subTask: [],
+        },
+        {
+          title: 'Completed task 2.1.2',
+          node: 3,
+          subTask: [],
+        },
+        {
+          title: 'Completed task 2.2.1',
+          node: 3,
+          subTask: [],
         },
       ],
     },
@@ -34,18 +62,37 @@ const TaskScreen = ({ navigation }) => {
       data: [
         {
           title: 'In Progress task 1',
+          node: 1,
           subTask: [],
         },
         {
           title: 'In Progress task 2',
+          node: 1,
           subTask: [],
         },
         {
           title: 'In Progress task 3',
+          node: 1,
           subTask: ['In Progress task 3.1', 'In Progress task 3.2'],
         },
         {
+          title: 'In Progress task 3.1',
+          node: 2,
+          subTask: [],
+        },
+        {
+          title: 'In Progress task 3.2',
+          node: 2,
+          subTask: ['In Progress task 3.2.1'],
+        },
+        {
+          title: 'In Progress task 3.2.1',
+          node: 3,
+          subTask: [],
+        },
+        {
           title: 'In Progress task 4',
+          node: 1,
           subTask: [],
         },
       ],
@@ -53,10 +100,17 @@ const TaskScreen = ({ navigation }) => {
   ];
 
   const renderSectionHeader = ({ section: { groupName, data } }) => {
+    let Datalength = 0;
+    data.map((item) => {
+      let node = _.get(item, 'node', '');
+      if (node === 1) {
+        Datalength++;
+      }
+    });
     return (
       <View>
         <Text style={styles.groupNameText}>
-          {groupName + ' - ' + data.length}
+          {groupName + ' - ' + Datalength}
         </Text>
       </View>
     );
@@ -78,8 +132,17 @@ const TaskScreen = ({ navigation }) => {
           keyExtractor={(item, index) => item + index}
           renderSectionHeader={renderSectionHeader}
           renderItem={renderItem}
-          stickySectionHeadersEnabled={true}
+          stickySectionHeadersEnabled={false}
           showsVerticalScrollIndicator={false}
+          ListFooterComponent={() => {
+            return (
+              <View
+                style={{
+                  paddingBottom: sw(200),
+                }}
+              />
+            );
+          }}
         />
       </View>
     </View>
