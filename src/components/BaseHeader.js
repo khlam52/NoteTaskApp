@@ -124,7 +124,7 @@ const getStyle = (theme, props) => {
       justifyContent: 'space-between',
       alignItems: 'center',
       marginHorizontal: sw(28),
-      paddingTop: sw(12),
+      paddingTop: sw(16),
       paddingBottom: sw(18),
       ...(!props.isTransparent && Platform.OS === 'android'
         ? { marginTop: StatusBarManager.HEIGHT }
@@ -138,7 +138,7 @@ const getStyle = (theme, props) => {
       alignItems: 'center',
     },
     titleText: {
-      ...Typography.ts(theme.fonts.weight.bold, theme.fonts.size.lead),
+      ...Typography.ts(theme.fonts.weight.bold, sw(30)),
       textAlign: 'center',
     },
     subTitleText: {

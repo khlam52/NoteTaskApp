@@ -7,6 +7,8 @@ const Route = {
   HOME_SCREEN: 'HOME_SCREEN',
   NOTE_SCREEN: 'NOTE_SCREEN',
   TASK_SCREEN: 'TASK_SCREEN',
+
+  TASK_CREATE_SCREEN: 'TASK_CREATE_SCREEN',
 };
 
 export default Route;

@@ -1,20 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
+import { useStoreActions, useStoreState } from 'easy-peasy';
+import _ from 'lodash';
 import { StyleSheet, Text, View, SectionList } from 'react-native';
 
-import { SettingIcon } from '../../assets/images';
 import BaseHeader from '../../components/BaseHeader';
+import StorageService from '../../services/StorageService';
 import TaskItemView from './TaskItemView';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import _ from 'lodash';
+import { useFocusEffect } from '@react-navigation/core';
 
 const TaskScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
   const theme = AppDefaultTheme.settings;
   const styles = getStyle(theme);
+
+  const loadRecentTaskList = useStoreActions(
+    (action) => action.user.loadRecentTaskList,
+  );
+
+  const recentTaskList = useStoreState((state) => state.user.recentTaskList);
+
+  const [restructureTaskList, setRestructureTaskList] = useState([]);
 
   let TaskList = [
     {
@@ -99,6 +109,64 @@ const TaskScreen = ({ navigation }) => {
     },
   ];
 
+  useFocusEffect(
+    useCallback(() => {
+      getTaskList();
+      restructureTaskListFunc();
+    }, []),
+  );
+
+  const restructureTaskListFunc = () => {
+    let completedList = [];
+    let inProgressList = [];
+    recentTaskList.map((item, index) => {
+      let parentUid = item.parentUid;
+      let status = item.status;
+      let subTaskList = [];
+      let subTaskArray = [];
+
+      if (item.node === 1) {
+        subTaskList = _.filter(recentTaskList, { parentUid: item.uid });
+      }
+      console.log('subTaskList:', subTaskList);
+      subTaskList.map((item) => {
+        subTaskArray.push(item.title);
+      });
+      let data = {
+        title: item.title,
+        node: item.node,
+        subTask: subTaskArray,
+      };
+      if (status === 'IN_PROGRESS') {
+        inProgressList.push(data);
+      } else {
+        completedList.push(data);
+      }
+    });
+    console.log('completedList:', completedList, inProgressList);
+    setRestructureTaskList([
+      {
+        groupName: 'Completed',
+        data: completedList,
+      },
+      {
+        groupName: 'In Progress',
+        data: inProgressList,
+      },
+    ]);
+  };
+
+  const getTaskList = async () => {
+    try {
+      let response = await StorageService.getTaskList();
+      console.log('response:', response);
+      loadRecentTaskList(response);
+      console.log('recentTaskList:', recentTaskList);
+    } catch (error) {
+      console.log('error->:', error);
+    }
+  };
+
   const renderSectionHeader = ({ section: { groupName, data } }) => {
     let Datalength = 0;
     data.map((item) => {
@@ -120,6 +188,12 @@ const TaskScreen = ({ navigation }) => {
     return <TaskItemView item={item} index={index} groupName={groupName} />;
   };
 
+  const noResultScreen = () => (
+    <View style={{ alignItems: 'center', marginTop: sw(150) }}>
+      <Text style={styles.infoText}>No Result !</Text>
+    </View>
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <BaseHeader notShowBackIcon={true} />
@@ -128,7 +202,7 @@ const TaskScreen = ({ navigation }) => {
 
         <SectionList
           style={styles.sectionList}
-          sections={TaskList}
+          sections={restructureTaskList ? restructureTaskList : []}
           keyExtractor={(item, index) => item + index}
           renderSectionHeader={renderSectionHeader}
           renderItem={renderItem}
@@ -143,6 +217,7 @@ const TaskScreen = ({ navigation }) => {
               />
             );
           }}
+          ListEmptyComponent={noResultScreen}
         />
       </View>
     </View>

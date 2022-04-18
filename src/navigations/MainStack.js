@@ -13,6 +13,7 @@ import useAppContext from '~src/contexts/app';
 import HomeScreen from '../screens/Common/HomeScreen';
 import NoteScreen from '../screens/Note/NoteScreen';
 import TaskScreen from '../screens/Task/TaskScreen';
+import TaskCreateScreen from '../screens/Task/TaskCreateScreen';
 
 const Stack = createStackNavigator();
 let deviceBrand = DeviceInfo.getBrand();
@@ -20,6 +21,7 @@ let deviceBrand = DeviceInfo.getBrand();
 // Define multiple groups of screens in objects like this
 const commonScreens = {};
 commonScreens[Route.TEMP_TEST_SCREEN] = TempTestScreen;
+commonScreens[Route.TASK_CREATE_SCREEN] = TaskCreateScreen;
 
 // One time launch screns
 const launchScreens = {};

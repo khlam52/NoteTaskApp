@@ -55,7 +55,7 @@ export const TabStack = (props) => {
     <View style={{ flex: 1 }}>
       {console.log('tab staclk now')}
       <Tab.Navigator
-        initialRouteName={Route.TASK_SCREEN}
+        initialRouteName={Route.HOME_SCREEN}
         backBehavior="initialRoute"
         shifting={false}
         tabBarVisible={false}

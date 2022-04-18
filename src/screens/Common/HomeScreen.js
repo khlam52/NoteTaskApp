@@ -13,6 +13,8 @@ import {
   PlusIcon,
   SettingIcon,
 } from '../../assets/images';
+import Route from '../../navigations/Route';
+import AppPressable from '../../components/AppPressable';
 
 const HomeScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -23,15 +25,25 @@ const HomeScreen = ({ navigation }) => {
     console.log('HomeScreen');
   }, []);
 
+  const goTaskCreateScreen = () => {
+    navigation.navigate(Route.TASK_CREATE_SCREEN);
+  };
+
+  const goNoteCreateScreen = () => {};
+
   const renderCreateItemView = (title, icon, callback) => {
     return (
       <View style={styles.itemView}>
         {icon}
-        <View style={styles.btnView}>
-          <View style={styles.plusIconView}>
-            <PlusIcon fill={'#FFF'} />
-          </View>
-          <Text style={styles.btnTitleText}>{title}</Text>
+        <View>
+          <AppPressable onPress={callback}>
+            <View style={styles.btnView}>
+              <View style={styles.plusIconView}>
+                <PlusIcon fill={'#FFF'} width={sw(30)} height={sw(30)} />
+              </View>
+              <Text style={styles.btnTitleText}>{title}</Text>
+            </View>
+          </AppPressable>
         </View>
       </View>
     );
@@ -41,8 +53,16 @@ const HomeScreen = ({ navigation }) => {
       <BaseHeader notShowBackIcon={true} />
       <View style={styles.container}>
         <Text style={styles.text}>Note Space</Text>
-        {renderCreateItemView('Create Task', <CreateTaskIcon />)}
-        {renderCreateItemView('Create Note', <CreateNoteIcon />)}
+        {renderCreateItemView(
+          'Create Task',
+          <CreateTaskIcon />,
+          goTaskCreateScreen,
+        )}
+        {renderCreateItemView(
+          'Create Note',
+          <CreateNoteIcon />,
+          goNoteCreateScreen,
+        )}
       </View>
     </View>
   );
@@ -59,7 +79,7 @@ const getStyle = (theme) => {
       ...Typography.ts(theme.fonts.weight.bold, sw(45)),
       color: '#FFF',
       textAlign: 'center',
-      marginBottom: sw(30),
+      marginBottom: sw(60),
     },
     settingView: {
       marginTop: sw(12),
@@ -81,7 +101,7 @@ const getStyle = (theme) => {
       elevation: 10,
     },
     btnView: {
-      width: '100%',
+      width: sw(332),
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: '#424450',
@@ -96,7 +116,7 @@ const getStyle = (theme) => {
       shadowOffset: { 0: 10 },
       shadowColor: '#000',
       elevation: 10,
-      alignSelf: 'center',
+      alignItems: 'center',
       justifyContent: 'center',
     },
     btnTitleText: {

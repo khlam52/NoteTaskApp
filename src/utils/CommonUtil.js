@@ -9,7 +9,7 @@ import i18n from 'i18n-js';
 const getMomentDate = (
   date,
   preSetDateFormat = null,
-  dateFormat = 'DD/MM/YYYY',
+  dateFormat = 'DD MMMM YYYY, ddd HH:mm',
   local = 'en',
 ) => {
   let returnDate = 'N/A';

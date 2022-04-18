@@ -10,6 +10,7 @@ import PlusIcon from '~src/assets/images/icons/plus-icon.svg';
 import SettingIcon from '~src/assets/images/icons/setting-icon.svg';
 import TickIcon from '~src/assets/images/icons/tick-icon.svg';
 import UnTickIcon from '~src/assets/images/icons/untick-icon.svg';
+import BackIcon from '~src/assets/images/icons/back-icon.svg';
 export {
   NavPlusIcon,
   NavNoteIcon,
@@ -23,4 +24,5 @@ export {
   ArrowRightIcon,
   ArrowUpIcon,
   ArrowDownIcon,
+  BackIcon,
 };
