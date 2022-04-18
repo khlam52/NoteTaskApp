@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
-import { StyleSheet, View, TextInput, Text } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Text,
+  LayoutAnimation,
+} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import AppButton from '../../components/AppButton';
@@ -10,10 +16,12 @@ import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import { TickIcon } from '../../assets/images';
+import { TickIcon, UnTickIcon } from '../../assets/images';
 import { v4 as uuidv4 } from 'uuid';
 import StorageService from '../../services/StorageService';
 import { useStoreActions, useStoreState } from 'easy-peasy';
+import SubTaskDropDownSelectionView from './SubTaskDropDownSelectionView';
+import AppPressable from '../../components/AppPressable';
 
 const TaskCreateScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -26,6 +34,9 @@ const TaskCreateScreen = ({ navigation }) => {
   const [inputDate, setInputDate] = useState(CommonUtil.getMomentToday());
 
   const [node, setNode] = useState(1);
+  const [isItemExtendPressed, setIsItemExtendPressed] = useState(false);
+  const [isSelectSubTask, setIsSelectSubTask] = useState(false);
+  const [selectedSubTaskUnder, setSelectedSubTaskUnder] = useState(null);
 
   const loadRecentTaskList = useStoreActions(
     (action) => action.user.loadRecentTaskList,
@@ -34,9 +45,15 @@ const TaskCreateScreen = ({ navigation }) => {
   const recentTaskList = useStoreState((state) => state.user.recentTaskList);
 
   useEffect(() => {
-    console.log('uuid:', uuidv4());
+    console.log('recentTaskList:', recentTaskList);
     // getTaskList();
   }, []);
+
+  useEffect(() => {
+    if (!isSelectSubTask) {
+      setSelectedSubTaskUnder(null);
+    }
+  }, [isSelectSubTask]);
 
   const onChangeTitle = (val) => {
     setInputTitle(val);
@@ -44,6 +61,11 @@ const TaskCreateScreen = ({ navigation }) => {
 
   const onChangeContent = (val) => {
     setInputContent(val);
+  };
+
+  const onSubTaskUnderPressed = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsSelectSubTask(!isSelectSubTask);
   };
 
   const getTaskList = async () => {
@@ -60,10 +82,17 @@ const TaskCreateScreen = ({ navigation }) => {
     let data = {
       title: inputTitle,
       content: inputContent,
-      node: node,
+      node:
+        isSelectSubTask && selectedSubTaskUnder
+          ? selectedSubTaskUnder.node + 1
+          : 1,
       uid: uuidv4(),
-      parentUid: null,
+      parentUid:
+        isSelectSubTask && selectedSubTaskUnder
+          ? selectedSubTaskUnder.uid
+          : null,
       status: 'IN_PROGRESS',
+      createAt: CommonUtil.getMomentDate(inputDate),
     };
 
     let newTaskList = recentTaskList;
@@ -100,7 +129,38 @@ const TaskCreateScreen = ({ navigation }) => {
             placeholderTextColor={'#B6B6B6'}
           />
         </View>
-        <View style={styles.btnView}>
+        {recentTaskList !== [] && (
+          <View>
+            <View style={styles.beSubtaskView}>
+              <AppPressable onPress={onSubTaskUnderPressed}>
+                {!isSelectSubTask ? (
+                  <UnTickIcon
+                    stroke={'#FFEAA1'}
+                    width={sw(25)}
+                    height={sw(25)}
+                  />
+                ) : (
+                  <TickIcon fill={'#FFEAA1'} width={sw(25)} height={sw(25)} />
+                )}
+              </AppPressable>
+
+              <Text style={styles.beSubtaskText}>Be a subtask under:</Text>
+            </View>
+            {isSelectSubTask && (
+              <View style={styles.subTaskDropDownView}>
+                <SubTaskDropDownSelectionView
+                  selectedSubTaskUnder={selectedSubTaskUnder}
+                  setSelectedSubTaskUnder={setSelectedSubTaskUnder}
+                  setIsItemExtendPressed={setIsItemExtendPressed}
+                  isItemExtendPressed={isItemExtendPressed}
+                />
+              </View>
+            )}
+          </View>
+        )}
+
+        <View
+          style={{ ...styles.btnView, zIndex: isItemExtendPressed ? -1 : 100 }}>
           <AppButton text={'Create'} onPress={onCreateBtnPressed} />
         </View>
       </KeyboardAwareScrollView>
@@ -115,6 +175,7 @@ const getStyle = (theme) => {
       backgroundColor: '#1B191E',
       paddingTop: sw(50),
       paddingHorizontal: sw(30),
+      paddingBottom: sw(90),
     },
     text: {
       ...Typography.ts(theme.fonts.weight.bold, sw(45)),
@@ -147,6 +208,20 @@ const getStyle = (theme) => {
     btnView: {
       alignItems: 'center',
       marginTop: sw(116),
+      zIndex: -1,
+    },
+    beSubtaskView: {
+      flexDirection: 'row',
+      marginTop: sw(30),
+    },
+    beSubtaskText: {
+      ...Typography.ts(theme.fonts.weight.regular, sw(24)),
+      color: '#FFEAA1',
+      marginLeft: sw(18),
+    },
+    subTaskDropDownView: {
+      alignItems: 'flex-end',
+      marginTop: sw(20),
     },
   });
 };

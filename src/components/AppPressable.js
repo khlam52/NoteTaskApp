@@ -1,14 +1,14 @@
 import React from 'react';
 
-import {Pressable, StyleSheet} from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
-import {AppDefaultTheme} from '~src/contexts/theme/AppTheme';
-import {Typography} from '~src/styles';
-import {sw, sf} from '~src/styles/Mixins';
+import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
+import { Typography } from '~src/styles';
+import { sw, sf } from '~src/styles/Mixins';
 
-const AppPressable = ({children, ...props}) => {
+const AppPressable = ({ children, ...props }) => {
   const theme = AppDefaultTheme.settings;
-  const styles = getStyle({...props, theme});
+  const styles = getStyle({ ...props, theme });
 
   return (
     <Pressable
@@ -19,7 +19,7 @@ const AppPressable = ({children, ...props}) => {
         bottom: 15,
         left: 15,
       }}
-      style={({pressed}) => {
+      style={({ pressed }) => {
         return [
           pressed
             ? styles.disabledStyle
@@ -36,7 +36,7 @@ const AppPressable = ({children, ...props}) => {
   );
 };
 
-const getStyle = ({theme, ...props}) => {
+const getStyle = ({ theme, ...props }) => {
   let textUnderLine = props.textUnderLine ? props.textUnderLine : 'underline';
   let textWeight = props.textWeight
     ? props.textWeight
@@ -50,7 +50,7 @@ const getStyle = ({theme, ...props}) => {
       textDecorationLine: textUnderLine,
     },
     disabledStyle: {
-      opacity: 0.3,
+      opacity: 0.6,
     },
   });
 };

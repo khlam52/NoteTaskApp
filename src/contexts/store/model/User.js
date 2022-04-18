@@ -9,6 +9,7 @@ let initCreateTaskObj = {
   uid: '',
   parentUid: null,
   status: 'IN_PROGESS',
+  createAt: '',
 };
 
 export default {
