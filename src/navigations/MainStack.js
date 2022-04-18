@@ -14,6 +14,7 @@ import HomeScreen from '../screens/Common/HomeScreen';
 import NoteScreen from '../screens/Note/NoteScreen';
 import TaskScreen from '../screens/Task/TaskScreen';
 import TaskCreateScreen from '../screens/Task/TaskCreateScreen';
+import SplashScreen from '../screens/Common/SplashScreen';
 
 const Stack = createStackNavigator();
 let deviceBrand = DeviceInfo.getBrand();
@@ -25,6 +26,7 @@ commonScreens[Route.TASK_CREATE_SCREEN] = TaskCreateScreen;
 
 // One time launch screns
 const launchScreens = {};
+launchScreens[Route.SPLASH_SCREEN] = SplashScreen;
 
 // Pre login Screens
 const authScreens = {};
@@ -41,11 +43,7 @@ export const MainStack = () => {
   const { isFinishLaunching, setIsFinishLaunching } = useAppContext();
 
   const getInitialRouteName = () => {
-    if (isFinishLaunching) {
-      return Route.TEMP_TEST_SCREEN;
-    } else {
-      return Route.SPLASH_SCREEN;
-    }
+    return Route.SPLASH_SCREEN;
   };
 
   const getScreenCardStyleInterpolator = (name) => {

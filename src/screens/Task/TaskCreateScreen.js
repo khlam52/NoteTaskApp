@@ -35,7 +35,7 @@ const TaskCreateScreen = ({ navigation }) => {
 
   useEffect(() => {
     console.log('uuid:', uuidv4());
-    getTaskList();
+    // getTaskList();
   }, []);
 
   const onChangeTitle = (val) => {

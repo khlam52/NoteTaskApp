@@ -111,7 +111,7 @@ const TaskScreen = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      getTaskList();
+      // getTaskList();
       restructureTaskListFunc();
     }, []),
   );
