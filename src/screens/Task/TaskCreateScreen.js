@@ -131,8 +131,8 @@ const TaskCreateScreen = ({ navigation }) => {
         </View>
         {recentTaskList !== [] && (
           <View>
-            <View style={styles.beSubtaskView}>
-              <AppPressable onPress={onSubTaskUnderPressed}>
+            <AppPressable onPress={onSubTaskUnderPressed}>
+              <View style={styles.beSubtaskView}>
                 {!isSelectSubTask ? (
                   <UnTickIcon
                     stroke={'#FFEAA1'}
@@ -142,10 +142,9 @@ const TaskCreateScreen = ({ navigation }) => {
                 ) : (
                   <TickIcon fill={'#FFEAA1'} width={sw(25)} height={sw(25)} />
                 )}
-              </AppPressable>
-
-              <Text style={styles.beSubtaskText}>Be a subtask under:</Text>
-            </View>
+                <Text style={styles.beSubtaskText}>Be a subtask under:</Text>
+              </View>
+            </AppPressable>
             {isSelectSubTask && (
               <View style={styles.subTaskDropDownView}>
                 <SubTaskDropDownSelectionView

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 
+import _ from 'lodash';
 import { StyleSheet, Text, View, LayoutAnimation } from 'react-native';
 
 import {
@@ -10,15 +11,28 @@ import {
   TickIcon,
   UnTickIcon,
 } from '../../assets/images';
+import AppPressable from '../../components/AppPressable';
 import { AppDefaultTheme } from '../../contexts/theme/AppTheme';
 import useAppContext from '~src/contexts/app';
 import useLocalization from '~src/contexts/i18n';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import AppPressable from '../../components/AppPressable';
-import _ from 'lodash';
 
-export default function TaskItemView({ item, index, groupName }) {
+TaskItemView.defaultProps = {
+  item: null,
+  index: null,
+  groupName: null,
+  onTickIconPressed: () => {},
+  isCompleted: false,
+};
+
+export default function TaskItemView({
+  item,
+  index,
+  groupName,
+  onTickIconPressed,
+  isCompleted,
+}) {
   const { t, locale, setLocale } = useLocalization();
   const { showLoading, hideLoading } = useAppContext();
   const theme = AppDefaultTheme.settings;
@@ -31,18 +45,19 @@ export default function TaskItemView({ item, index, groupName }) {
     setIsItemExtendPressed(!isItemExtendPressed);
   };
 
-  let isCompleted = groupName === 'Completed' ? true : false;
   let node = _.get(item, 'node', '');
   return (
     node === 1 && (
       <View>
         <View key={index} style={styles.itemView}>
           <View style={styles.itemLeftRowView}>
-            {isCompleted ? (
-              <TickIcon fill={'#FFEAA1'} />
-            ) : (
-              <UnTickIcon stroke={'#FFEAA1'} />
-            )}
+            <AppPressable onPress={onTickIconPressed}>
+              {isCompleted ? (
+                <TickIcon fill={'#FFEAA1'} />
+              ) : (
+                <UnTickIcon stroke={'#FFEAA1'} />
+              )}
+            </AppPressable>
             <Text style={styles.itemTitleText}>{item.title}</Text>
           </View>
 
@@ -61,21 +76,38 @@ export default function TaskItemView({ item, index, groupName }) {
         {isItemExtendPressed &&
           item.subTask.length > 0 &&
           item.subTask.map((subItem, subIndex) => {
+            let isSubTaskCompleted =
+              subItem.status === 'IN_PROGRESS' ? false : true;
+            const onSubTickIconPressed = () => {
+              isSubTaskCompleted = !isSubTaskCompleted;
+              // recentTaskList.map((selectedItem) => {
+              //   if (selectedItem.uid === item.uid) {
+              //     selectedItem.status =
+              //       isCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
+              //   }
+              // });
+            };
             return (
               <View
                 key={subIndex}
                 style={{ ...styles.itemView, marginLeft: sw(46) }}>
                 <View style={styles.itemLeftRowView}>
-                  {isCompleted ? (
-                    <TickIcon fill={'#D3FFB8'} width={sw(25)} height={sw(25)} />
-                  ) : (
-                    <UnTickIcon
-                      stroke={'#D3FFB8'}
-                      width={sw(25)}
-                      height={sw(25)}
-                    />
-                  )}
-                  <Text style={styles.itemTitleText}>{subItem}</Text>
+                  <AppPressable onPress={onSubTickIconPressed}>
+                    {isSubTaskCompleted ? (
+                      <TickIcon
+                        fill={'#D3FFB8'}
+                        width={sw(25)}
+                        height={sw(25)}
+                      />
+                    ) : (
+                      <UnTickIcon
+                        stroke={'#D3FFB8'}
+                        width={sw(25)}
+                        height={sw(25)}
+                      />
+                    )}
+                  </AppPressable>
+                  <Text style={styles.itemTitleText}>{subItem.title}</Text>
                 </View>
                 <ArrowRightIcon fill={'#FFF'} />
               </View>

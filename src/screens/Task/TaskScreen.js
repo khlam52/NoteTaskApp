@@ -1,17 +1,31 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
+import { useFocusEffect } from '@react-navigation/core';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import _ from 'lodash';
-import { StyleSheet, Text, View, SectionList } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SectionList,
+  LayoutAnimation,
+} from 'react-native';
 
+import {
+  ArrowDownIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  TickIcon,
+  UnTickIcon,
+} from '../../assets/images';
+import AppPressable from '../../components/AppPressable';
 import BaseHeader from '../../components/BaseHeader';
-import StorageService from '../../services/StorageService';
-import TaskItemView from './TaskItemView';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import { useFocusEffect } from '@react-navigation/core';
+import StorageService from '../../services/StorageService';
+import TaskItemView from '~src/screens/Task/TaskItemView';
 
 const TaskScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -26,95 +40,15 @@ const TaskScreen = ({ navigation }) => {
 
   const [restructureTaskList, setRestructureTaskList] = useState([]);
 
-  let TaskList = [
-    {
-      groupName: 'Completed',
-      data: [
-        {
-          title: 'Completed task 1',
-          node: 1,
-          subTask: [],
-        },
-        {
-          title: 'Completed task 2',
-          node: 1,
-          subTask: ['Completed task 2.1', 'Completed task 2.2'],
-        },
-        {
-          title: 'Completed task 2.1',
-          node: 2,
-          subTask: ['Completed task 2.1.1', 'Completed task 2.1.2'],
-        },
-        {
-          title: 'Completed task 2.2',
-          node: 2,
-          subTask: ['Completed task 2.2.1'],
-        },
-        {
-          title: 'Completed task 2.1.1',
-          node: 3,
-          subTask: [],
-        },
-        {
-          title: 'Completed task 2.1.2',
-          node: 3,
-          subTask: [],
-        },
-        {
-          title: 'Completed task 2.2.1',
-          node: 3,
-          subTask: [],
-        },
-      ],
-    },
-    {
-      groupName: 'In Progress',
-      data: [
-        {
-          title: 'In Progress task 1',
-          node: 1,
-          subTask: [],
-        },
-        {
-          title: 'In Progress task 2',
-          node: 1,
-          subTask: [],
-        },
-        {
-          title: 'In Progress task 3',
-          node: 1,
-          subTask: ['In Progress task 3.1', 'In Progress task 3.2'],
-        },
-        {
-          title: 'In Progress task 3.1',
-          node: 2,
-          subTask: [],
-        },
-        {
-          title: 'In Progress task 3.2',
-          node: 2,
-          subTask: ['In Progress task 3.2.1'],
-        },
-        {
-          title: 'In Progress task 3.2.1',
-          node: 3,
-          subTask: [],
-        },
-        {
-          title: 'In Progress task 4',
-          node: 1,
-          subTask: [],
-        },
-      ],
-    },
-  ];
-
   useFocusEffect(
     useCallback(() => {
-      // getTaskList();
       restructureTaskListFunc();
     }, []),
   );
+
+  useEffect(() => {
+    restructureTaskListFunc();
+  }, [recentTaskList]);
 
   const restructureTaskListFunc = () => {
     let completedList = [];
@@ -128,14 +62,15 @@ const TaskScreen = ({ navigation }) => {
       if (item.node === 1) {
         subTaskList = _.filter(recentTaskList, { parentUid: item.uid });
       }
-      console.log('subTaskList:', subTaskList);
       subTaskList.map((item) => {
         subTaskArray.push(item.title);
       });
       let data = {
         title: item.title,
         node: item.node,
-        subTask: subTaskArray,
+        subTask: subTaskList,
+        status: status,
+        uid: item.uid,
       };
       if (status === 'IN_PROGRESS') {
         inProgressList.push(data);
@@ -143,7 +78,6 @@ const TaskScreen = ({ navigation }) => {
         completedList.push(data);
       }
     });
-    console.log('completedList:', completedList, inProgressList);
     setRestructureTaskList([
       {
         groupName: 'Completed',
@@ -159,7 +93,6 @@ const TaskScreen = ({ navigation }) => {
   const getTaskList = async () => {
     try {
       let response = await StorageService.getTaskList();
-      console.log('response:', response);
       loadRecentTaskList(response);
       console.log('recentTaskList:', recentTaskList);
     } catch (error) {
@@ -185,7 +118,29 @@ const TaskScreen = ({ navigation }) => {
   };
 
   const renderItem = ({ item, index, section: { groupName } }) => {
-    return <TaskItemView item={item} index={index} groupName={groupName} />;
+    let isCompleted = groupName === 'Completed' ? true : false;
+
+    const onTickIconPressed = () => {
+      isCompleted = !isCompleted;
+      recentTaskList.map((selectedItem) => {
+        if (selectedItem.uid === item.uid) {
+          selectedItem.status =
+            isCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
+        }
+      });
+      StorageService.setTaskList(recentTaskList);
+      getTaskList();
+    };
+
+    return (
+      <TaskItemView
+        item={item}
+        index={index}
+        groupName={groupName}
+        onTickIconPressed={onTickIconPressed}
+        isCompleted={isCompleted}
+      />
+    );
   };
 
   const noResultScreen = () => (

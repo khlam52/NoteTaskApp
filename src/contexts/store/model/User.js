@@ -22,13 +22,10 @@ export default {
   }),
 
   loadRecentTaskList: action((state, payload) => {
-    console.log('loadRecentTaskList:', payload);
     if (payload === null) {
       state.recentTaskList = [];
     } else {
       state.recentTaskList = payload;
     }
-
-    console.log('state.recentTaskList:', state.recentTaskList);
   }),
 };

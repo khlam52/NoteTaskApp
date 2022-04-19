@@ -56,7 +56,7 @@ export default function SubTaskDropDownSelectionView({
   const renderSelectTaskView = () => {
     return recentTaskList.map((item, index) => {
       return (
-        item.node !== 3 && (
+        item.node === 1 && (
           <AppPressable
             onPress={() => {
               onDropDownItemPressed(item);
