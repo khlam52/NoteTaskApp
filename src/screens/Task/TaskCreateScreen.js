@@ -100,6 +100,7 @@ const TaskCreateScreen = ({ navigation }) => {
 
     console.log('newTaskList:', newTaskList);
     StorageService.setTaskList(newTaskList);
+    loadRecentTaskList(newTaskList);
     navigation.goBack();
   };
 

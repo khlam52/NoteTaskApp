@@ -92,12 +92,31 @@ export default function TaskItemView({
                   selectedItem.status =
                     isSubTaskCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
                 }
-                item.subTask.map((selectedSubItem) => {
-                  if (selectedSubItem.uid === subItem.uid) {
-                    selectedSubItem.status =
-                      isSubTaskCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
+              });
+              recentTaskList.map((subTaskHandleItem) => {
+                let subTaskList = [];
+                let completedLists = [];
+                if (subTaskHandleItem.node === 1) {
+                  subTaskList = _.filter(recentTaskList, {
+                    parentUid: subTaskHandleItem.uid,
+                  });
+                  completedLists = _.filter(subTaskList, {
+                    status: 'COMPLETED',
+                  });
+                  if (
+                    subTaskList.length > 0 &&
+                    subTaskList.length === completedLists.length &&
+                    !isCompleted
+                  ) {
+                    subTaskHandleItem.status = 'COMPLETED';
+                  } else if (
+                    subTaskList.length > 0 &&
+                    subTaskList.length > completedLists.length &&
+                    isCompleted
+                  ) {
+                    subTaskHandleItem.status = 'IN_PROGRESS';
                   }
-                });
+                }
               });
               StorageService.setTaskList(recentTaskList);
               try {
