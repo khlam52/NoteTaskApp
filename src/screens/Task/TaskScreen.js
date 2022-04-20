@@ -3,29 +3,15 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/core';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import _ from 'lodash';
-import {
-  StyleSheet,
-  Text,
-  View,
-  SectionList,
-  LayoutAnimation,
-} from 'react-native';
+import { StyleSheet, Text, View, SectionList } from 'react-native';
 
-import {
-  ArrowDownIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
-  TickIcon,
-  UnTickIcon,
-} from '../../assets/images';
-import AppPressable from '../../components/AppPressable';
 import BaseHeader from '../../components/BaseHeader';
+import StorageService from '../../services/StorageService';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
+import TaskItemView from '~src/screens/Task/TaskItemView';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import StorageService from '../../services/StorageService';
-import TaskItemView from '~src/screens/Task/TaskItemView';
 
 const TaskScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -62,8 +48,8 @@ const TaskScreen = ({ navigation }) => {
       if (item.node === 1) {
         subTaskList = _.filter(recentTaskList, { parentUid: item.uid });
       }
-      subTaskList.map((item) => {
-        subTaskArray.push(item.title);
+      subTaskList.map((items) => {
+        subTaskArray.push(items.title);
       });
       let data = {
         title: item.title,
@@ -88,6 +74,7 @@ const TaskScreen = ({ navigation }) => {
         data: inProgressList,
       },
     ]);
+    console.log('restructureTaskList:', restructureTaskList);
   };
 
   const getTaskList = async () => {
@@ -127,6 +114,9 @@ const TaskScreen = ({ navigation }) => {
           selectedItem.status =
             isCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
         }
+        item.subTask.map((subItem) => {
+          subItem.status = isCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
+        });
       });
       StorageService.setTaskList(recentTaskList);
       getTaskList();

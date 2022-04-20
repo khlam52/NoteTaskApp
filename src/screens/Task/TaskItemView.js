@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 
+import { useStoreActions, useStoreState } from 'easy-peasy';
 import _ from 'lodash';
 import { StyleSheet, Text, View, LayoutAnimation } from 'react-native';
 
@@ -13,6 +14,7 @@ import {
 } from '../../assets/images';
 import AppPressable from '../../components/AppPressable';
 import { AppDefaultTheme } from '../../contexts/theme/AppTheme';
+import StorageService from '../../services/StorageService';
 import useAppContext from '~src/contexts/app';
 import useLocalization from '~src/contexts/i18n';
 import { Typography } from '~src/styles';
@@ -37,6 +39,11 @@ export default function TaskItemView({
   const { showLoading, hideLoading } = useAppContext();
   const theme = AppDefaultTheme.settings;
   const styles = getStyle(theme, locale);
+
+  const recentTaskList = useStoreState((state) => state.user.recentTaskList);
+  const loadRecentTaskList = useStoreActions(
+    (action) => action.user.loadRecentTaskList,
+  );
 
   const [isItemExtendPressed, setIsItemExtendPressed] = useState(false);
 
@@ -78,14 +85,28 @@ export default function TaskItemView({
           item.subTask.map((subItem, subIndex) => {
             let isSubTaskCompleted =
               subItem.status === 'IN_PROGRESS' ? false : true;
-            const onSubTickIconPressed = () => {
+            const onSubTickIconPressed = async () => {
               isSubTaskCompleted = !isSubTaskCompleted;
-              // recentTaskList.map((selectedItem) => {
-              //   if (selectedItem.uid === item.uid) {
-              //     selectedItem.status =
-              //       isCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
-              //   }
-              // });
+              recentTaskList.map((selectedItem) => {
+                if (selectedItem.uid === subItem.uid) {
+                  selectedItem.status =
+                    isSubTaskCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
+                }
+                item.subTask.map((selectedSubItem) => {
+                  if (selectedSubItem.uid === subItem.uid) {
+                    selectedSubItem.status =
+                      isSubTaskCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
+                  }
+                });
+              });
+              StorageService.setTaskList(recentTaskList);
+              try {
+                let response = await StorageService.getTaskList();
+                loadRecentTaskList(response);
+                console.log('recentTaskList:', recentTaskList);
+              } catch (error) {
+                console.log('error->:', error);
+              }
             };
             return (
               <View
