@@ -11,6 +11,7 @@ const Route = {
   TASK_SCREEN: 'TASK_SCREEN',
 
   TASK_CREATE_SCREEN: 'TASK_CREATE_SCREEN',
+  TASK_EDIT_SCREEN: 'TASK_EDIT_SCREEN',
 };
 
 export default Route;

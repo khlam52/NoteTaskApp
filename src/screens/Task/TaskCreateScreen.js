@@ -161,7 +161,11 @@ const TaskCreateScreen = ({ navigation }) => {
 
         <View
           style={{ ...styles.btnView, zIndex: isItemExtendPressed ? -1 : 100 }}>
-          <AppButton text={'Create'} onPress={onCreateBtnPressed} />
+          <AppButton
+            text={'Create'}
+            onPress={onCreateBtnPressed}
+            disabled={!inputTitle ? true : false}
+          />
         </View>
       </KeyboardAwareScrollView>
     </View>

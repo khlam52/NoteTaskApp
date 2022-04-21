@@ -24,6 +24,8 @@ const AppPressable = ({ children, ...props }) => {
           pressed
             ? styles.disabledStyle
             : props.disabled
+            ? styles.disabledStyle
+            : null
             ? props.customDisabledStyle
               ? null
               : null

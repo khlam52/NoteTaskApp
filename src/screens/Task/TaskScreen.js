@@ -57,6 +57,9 @@ const TaskScreen = ({ navigation }) => {
         subTask: subTaskList,
         status: status,
         uid: item.uid,
+        parentUid: parentUid,
+        content: item.content,
+        createAt: item.createAt,
       };
       if (status === 'IN_PROGRESS') {
         inProgressList.push(data);

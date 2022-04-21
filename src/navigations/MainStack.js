@@ -15,6 +15,7 @@ import NoteScreen from '../screens/Note/NoteScreen';
 import TaskScreen from '../screens/Task/TaskScreen';
 import TaskCreateScreen from '../screens/Task/TaskCreateScreen';
 import SplashScreen from '../screens/Common/SplashScreen';
+import TaskEditScreen from '../screens/Task/TaskEditScreen';
 
 const Stack = createStackNavigator();
 let deviceBrand = DeviceInfo.getBrand();
@@ -23,6 +24,7 @@ let deviceBrand = DeviceInfo.getBrand();
 const commonScreens = {};
 commonScreens[Route.TEMP_TEST_SCREEN] = TempTestScreen;
 commonScreens[Route.TASK_CREATE_SCREEN] = TaskCreateScreen;
+commonScreens[Route.TASK_EDIT_SCREEN] = TaskEditScreen;
 
 // One time launch screns
 const launchScreens = {};
