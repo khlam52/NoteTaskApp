@@ -7,6 +7,7 @@ import { StyleSheet, Text, View, SectionList } from 'react-native';
 
 import BaseHeader from '../../components/BaseHeader';
 import StorageService from '../../services/StorageService';
+import TaskHelper from '../../utils/TaskHelper';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import TaskItemView from '~src/screens/Task/TaskItemView';
@@ -26,69 +27,25 @@ const TaskScreen = ({ navigation }) => {
 
   const [restructureTaskList, setRestructureTaskList] = useState([]);
 
-  useFocusEffect(
-    useCallback(() => {
-      restructureTaskListFunc();
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     TaskHelper.restructureTaskListFunc(
+  //       recentTaskList,
+  //       restructureTaskList,
+  //       setRestructureTaskList,
+  //       loadRecentTaskList,
+  //     );
+  //   }, []),
+  // );
 
   useEffect(() => {
-    restructureTaskListFunc();
+    TaskHelper.restructureTaskListFunc(
+      recentTaskList,
+      restructureTaskList,
+      setRestructureTaskList,
+      loadRecentTaskList,
+    );
   }, [recentTaskList]);
-
-  const restructureTaskListFunc = () => {
-    let completedList = [];
-    let inProgressList = [];
-    recentTaskList.map((item, index) => {
-      let parentUid = item.parentUid;
-      let status = item.status;
-      let subTaskList = [];
-      let subTaskArray = [];
-
-      if (item.node === 1) {
-        subTaskList = _.filter(recentTaskList, { parentUid: item.uid });
-      }
-      subTaskList.map((items) => {
-        subTaskArray.push(items.title);
-      });
-      let data = {
-        title: item.title,
-        node: item.node,
-        subTask: subTaskList,
-        status: status,
-        uid: item.uid,
-        parentUid: parentUid,
-        content: item.content,
-        createAt: item.createAt,
-      };
-      if (status === 'IN_PROGRESS') {
-        inProgressList.push(data);
-      } else {
-        completedList.push(data);
-      }
-    });
-    setRestructureTaskList([
-      {
-        groupName: 'Completed',
-        data: completedList,
-      },
-      {
-        groupName: 'In Progress',
-        data: inProgressList,
-      },
-    ]);
-    console.log('restructureTaskList:', restructureTaskList);
-  };
-
-  const getTaskList = async () => {
-    try {
-      let response = await StorageService.getTaskList();
-      loadRecentTaskList(response);
-      console.log('recentTaskList:', recentTaskList);
-    } catch (error) {
-      console.log('error->:', error);
-    }
-  };
 
   const renderSectionHeader = ({ section: { groupName, data } }) => {
     let Datalength = 0;
@@ -113,16 +70,13 @@ const TaskScreen = ({ navigation }) => {
     const onTickIconPressed = () => {
       isCompleted = !isCompleted;
       recentTaskList.map((selectedItem) => {
+        // Parent Item
         if (selectedItem.uid === item.uid) {
           selectedItem.status =
             isCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
         }
-        item.subTask.map((subItem) => {
-          subItem.status = isCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
-        });
       });
-      StorageService.setTaskList(recentTaskList);
-      getTaskList();
+      TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
     };
 
     return (
@@ -183,12 +137,6 @@ const getStyle = (theme) => {
       color: '#FFF',
       textAlign: 'center',
     },
-    settingView: {
-      marginTop: sw(12),
-      marginRight: sw(40),
-      marginBottom: sw(20),
-      alignSelf: 'flex-end',
-    },
     sectionList: {
       marginHorizontal: sw(20),
     },
@@ -197,25 +145,6 @@ const getStyle = (theme) => {
       color: '#FFF',
       marginBottom: sw(20),
       paddingTop: sw(30),
-    },
-    itemTitleText: {
-      ...Typography.ts(theme.fonts.weight.regular, sw(16)),
-      color: '#FFF',
-      paddingLeft: sw(18),
-    },
-    itemView: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: '#424450',
-      borderRadius: sw(20),
-      justifyContent: 'space-between',
-      paddingHorizontal: sw(16),
-      paddingVertical: sw(12),
-      marginBottom: sw(12),
-    },
-    itemLeftRowView: {
-      flexDirection: 'row',
-      alignItems: 'center',
     },
   });
 };

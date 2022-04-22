@@ -22,6 +22,7 @@ import StorageService from '../../services/StorageService';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import SubTaskDropDownSelectionView from './SubTaskDropDownSelectionView';
 import AppPressable from '../../components/AppPressable';
+import TaskHelper from '../../utils/TaskHelper';
 
 const TaskCreateScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -46,7 +47,6 @@ const TaskCreateScreen = ({ navigation }) => {
 
   useEffect(() => {
     console.log('recentTaskList:', recentTaskList);
-    // getTaskList();
   }, []);
 
   useEffect(() => {
@@ -66,16 +66,6 @@ const TaskCreateScreen = ({ navigation }) => {
   const onSubTaskUnderPressed = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsSelectSubTask(!isSelectSubTask);
-  };
-
-  const getTaskList = async () => {
-    try {
-      let response = await StorageService.getTaskList();
-      loadRecentTaskList(response);
-      console.log('recentTaskList:', recentTaskList);
-    } catch (error) {
-      console.log('error->:', error);
-    }
   };
 
   const onCreateBtnPressed = () => {
@@ -100,7 +90,7 @@ const TaskCreateScreen = ({ navigation }) => {
 
     console.log('newTaskList:', newTaskList);
     StorageService.setTaskList(newTaskList);
-    loadRecentTaskList(newTaskList);
+    TaskHelper.getTaskList(loadRecentTaskList);
     navigation.goBack();
   };
 

@@ -21,6 +21,7 @@ import useLocalization from '~src/contexts/i18n';
 import RootNavigation from '~src/navigations/RootNavigation';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
+import TaskHelper from '../../utils/TaskHelper';
 
 TaskItemView.defaultProps = {
   item: null,
@@ -101,45 +102,17 @@ export default function TaskItemView({
               subItem.status === 'IN_PROGRESS' ? false : true;
             const onSubTickIconPressed = async () => {
               isSubTaskCompleted = !isSubTaskCompleted;
+              // Subitem itself
               recentTaskList.map((selectedItem) => {
                 if (selectedItem.uid === subItem.uid) {
                   selectedItem.status =
                     isSubTaskCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
                 }
               });
-              recentTaskList.map((subTaskHandleItem) => {
-                let subTaskList = [];
-                let completedLists = [];
-                if (subTaskHandleItem.node === 1) {
-                  subTaskList = _.filter(recentTaskList, {
-                    parentUid: subTaskHandleItem.uid,
-                  });
-                  completedLists = _.filter(subTaskList, {
-                    status: 'COMPLETED',
-                  });
-                  if (
-                    subTaskList.length > 0 &&
-                    subTaskList.length === completedLists.length &&
-                    !isCompleted
-                  ) {
-                    subTaskHandleItem.status = 'COMPLETED';
-                  } else if (
-                    subTaskList.length > 0 &&
-                    subTaskList.length > completedLists.length &&
-                    isCompleted
-                  ) {
-                    subTaskHandleItem.status = 'IN_PROGRESS';
-                  }
-                }
-              });
-              StorageService.setTaskList(recentTaskList);
-              try {
-                let response = await StorageService.getTaskList();
-                loadRecentTaskList(response);
-                console.log('recentTaskList:', recentTaskList);
-              } catch (error) {
-                console.log('error->:', error);
-              }
+              TaskHelper.reCorrectTaskListBySubtask(
+                recentTaskList,
+                loadRecentTaskList,
+              );
             };
             return (
               <AppPressable

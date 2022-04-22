@@ -23,6 +23,7 @@ import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
+import TaskHelper from '../../utils/TaskHelper';
 
 const TaskEditScreen = ({ navigation, route }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -71,6 +72,8 @@ const TaskEditScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (!isSelectSubTask) {
       setSelectedSubTaskUnder(null);
+    } else if (isSelectSubTask) {
+      setNode(2);
     }
   }, [isSelectSubTask]);
 
@@ -109,8 +112,12 @@ const TaskEditScreen = ({ navigation, route }) => {
         item.createAt = CommonUtil.getMomentDate(CommonUtil.getMomentToday());
       }
     });
-    StorageService.setTaskList(recentTaskList);
-    loadRecentTaskList(recentTaskList);
+    if (node === 1) {
+      TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
+    } else {
+      TaskHelper.reCorrectTaskListBySubtask(recentTaskList, loadRecentTaskList);
+    }
+
     navigation.goBack();
   };
 
