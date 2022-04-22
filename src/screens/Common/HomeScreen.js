@@ -29,7 +29,9 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate(Route.TASK_CREATE_SCREEN);
   };
 
-  const goNoteCreateScreen = () => {};
+  const goNoteCreateScreen = () => {
+    navigation.navigate(Route.CREATE_AND_EDIT_NOTE_SCREEN);
+  };
 
   const renderCreateItemView = (title, icon, callback) => {
     return (

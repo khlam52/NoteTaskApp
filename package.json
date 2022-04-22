@@ -14,6 +14,7 @@
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
+    "@terrylinla/react-native-sketch-canvas": "^0.8.0",
     "babel-plugin-root-import": "^6.6.0",
     "d3-shape": "^3.1.0",
     "easy-peasy": "^5.0.4",
@@ -29,6 +30,7 @@
     "react-native-curved-bottom-bar": "^1.7.4",
     "react-native-device-info": "^8.7.0",
     "react-native-gesture-handler": "^2.3.2",
+    "react-native-image-crop-picker": "^0.37.3",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-localize": "^2.2.1",
@@ -36,6 +38,7 @@
     "react-native-pager-view": "^5.4.15",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-safe-area-context": "^4.2.4",
+    "react-native-share": "^7.3.9",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-svg": "^12.3.0",
     "react-native-svg-transformer": "^1.0.0"

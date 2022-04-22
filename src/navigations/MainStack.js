@@ -6,16 +6,17 @@ import {
 } from '@react-navigation/stack';
 import DeviceInfo from 'react-native-device-info';
 
+import HomeScreen from '../screens/Common/HomeScreen';
+import SplashScreen from '../screens/Common/SplashScreen';
+import CreateAndEditNoteScreen from '../screens/Note/CreateAndEditNoteScreen';
+import NoteScreen from '../screens/Note/NoteScreen';
+import TaskCreateScreen from '../screens/Task/TaskCreateScreen';
+import TaskEditScreen from '../screens/Task/TaskEditScreen';
+import TaskScreen from '../screens/Task/TaskScreen';
 import TempTestScreen from '../screens/TempTestScreen';
 import Route from './Route';
 import { TabStack } from './TabStack';
 import useAppContext from '~src/contexts/app';
-import HomeScreen from '../screens/Common/HomeScreen';
-import NoteScreen from '../screens/Note/NoteScreen';
-import TaskScreen from '../screens/Task/TaskScreen';
-import TaskCreateScreen from '../screens/Task/TaskCreateScreen';
-import SplashScreen from '../screens/Common/SplashScreen';
-import TaskEditScreen from '../screens/Task/TaskEditScreen';
 
 const Stack = createStackNavigator();
 let deviceBrand = DeviceInfo.getBrand();
@@ -25,6 +26,7 @@ const commonScreens = {};
 commonScreens[Route.TEMP_TEST_SCREEN] = TempTestScreen;
 commonScreens[Route.TASK_CREATE_SCREEN] = TaskCreateScreen;
 commonScreens[Route.TASK_EDIT_SCREEN] = TaskEditScreen;
+commonScreens[Route.CREATE_AND_EDIT_NOTE_SCREEN] = CreateAndEditNoteScreen;
 
 // One time launch screns
 const launchScreens = {};

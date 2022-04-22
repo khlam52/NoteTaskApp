@@ -119,7 +119,7 @@ const TaskScreen = ({ navigation }) => {
               />
             );
           }}
-          ListEmptyComponent={noResultScreen}
+          // ListEmptyComponent={noResultScreen}
         />
       </View>
     </View>
