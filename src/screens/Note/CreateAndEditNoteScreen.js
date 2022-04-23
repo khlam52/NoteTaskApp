@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   StyleSheet,
@@ -7,6 +7,8 @@ import {
   Platform,
   TextInput,
   Image,
+  ScrollView,
+  Keyboard,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -14,6 +16,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {
   AosShareIcon,
   CameraIcon,
+  FontIcon,
   IosShareIcon,
   PenIcon,
   PhotoLibraryIcon,
@@ -25,6 +28,7 @@ import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
+import Route from '../../navigations/Route';
 
 const CreateAndEditNoteScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -32,12 +36,13 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
   const styles = getStyle(theme);
 
   const [inputTitle, setInputTitle] = useState(null);
-  const [inputContent, setInputContent] = useState(null);
+  const [inputDate, setInputDate] = useState(CommonUtil.getMomentToday());
 
   let getNoteContentLayoutList = [];
   const [noteContentLayoutList, setNoteContentLayoutList] = useState([]);
 
-  const [inputDate, setInputDate] = useState(CommonUtil.getMomentToday());
+  const inputRef = useRef(null);
+  const [isShowFontIcon, setIsShowFontIcon] = useState(false);
 
   const bottomBtnList = [
     {
@@ -55,19 +60,25 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     {
       icon: <PenIcon />,
       onPress: () => {
-        getNoteContentLayoutList = [
-          ...noteContentLayoutList,
-          {
-            type: 'TEXT',
-            value: null,
-            fontSize: sw(18),
-            fontStyle: theme.fonts.weight.light,
-            align: 'left',
-            paddingLeft: sw(0),
-          },
-        ];
-        setNoteContentLayoutList(getNoteContentLayoutList);
-        renderTextInput();
+        if (
+          noteContentLayoutList.length === 0 ||
+          noteContentLayoutList[noteContentLayoutList.length - 1].type !==
+            'TEXT'
+        ) {
+          getNoteContentLayoutList = [
+            ...noteContentLayoutList,
+            {
+              type: 'TEXT',
+              value: '',
+              fontSize: sw(18),
+              fontStyle: theme.fonts.weight.light,
+              align: 'left',
+              paddingLeft: sw(0),
+              inputRef: null,
+            },
+          ];
+          setNoteContentLayoutList(getNoteContentLayoutList);
+        }
       },
     },
   ];
@@ -80,17 +91,21 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     setInputTitle(val);
   };
 
-  const onChangeContent = (val) => {
-    setInputContent(val);
+  const onChangeContent = (val, index) => {
+    let newNoteContentLayoutList = [...noteContentLayoutList];
+    newNoteContentLayoutList[index].value = val;
+    setNoteContentLayoutList(newNoteContentLayoutList);
+  };
+
+  const onFontIconPressed = () => {
+    navigation.navigate(Route.BOTTOM_FONT_STYLE_SELECTION_MODAL);
   };
 
   const accessImagePickerFunc = () => {
     ImagePicker.openPicker({
       width: 1000,
       height: 1000,
-      borderRadius: 100,
       cropping: true,
-      cropperCircleOverlay: true,
       freeStyleCropEnabled: true,
       multiple: false,
       includeBase64: true,
@@ -113,9 +128,7 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     ImagePicker.openCamera({
       width: 1000,
       height: 1000,
-      borderRadius: 100,
       cropping: true,
-      cropperCircleOverlay: true,
       freeStyleCropEnabled: true,
       includeBase64: true,
     }).then((images) => {
@@ -147,9 +160,23 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     return (
       <TextInput
         key={index}
-        value={inputContent}
-        onChangeText={onChangeContent}
-        style={styles.inputTitleText}
+        value={item.value}
+        onChangeText={(val) => {
+          onChangeContent(val, index);
+        }}
+        style={styles.inputContentText}
+        multiline={true}
+        placeholder={'Add Text...'}
+        placeholderTextColor={'#B6B6B6'}
+        ref={inputRef}
+        onBlur={() => {
+          console.log('inputRef:', inputRef.current.isFocused());
+          setIsShowFontIcon(false);
+        }}
+        onFocus={() => {
+          console.log('inputRef:', inputRef.current.isFocused());
+          setIsShowFontIcon(true);
+        }}
       />
     );
   };
@@ -186,6 +213,13 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
       <BaseHeader
         rightElement={
           <View style={styles.headerRightView}>
+            {isShowFontIcon && (
+              <AppPressable onPress={onFontIconPressed}>
+                <View style={{ marginRight: sw(18) }}>
+                  <FontIcon />
+                </View>
+              </AppPressable>
+            )}
             {Platform.OS === 'ios' ? <IosShareIcon /> : <AosShareIcon />}
             <Text style={styles.doneText}>Done</Text>
           </View>
@@ -206,6 +240,7 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
         </Text>
         {renderInputContentView()}
       </KeyboardAwareScrollView>
+
       {renderBottomBtnView()}
     </View>
   );
@@ -214,7 +249,7 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
 const getStyle = (theme) => {
   return StyleSheet.create({
     container: {
-      flex: 1,
+      //   flex: 1,
       backgroundColor: '#1B191E',
       paddingTop: sw(50),
       paddingHorizontal: sw(30),
@@ -263,12 +298,10 @@ const getStyle = (theme) => {
       justifyContent: 'center',
     },
     images: {
-      width: sw(80),
-      height: sw(80),
-      // borderColor: 'black',
-      // borderWidth: 1,
-      // marginHorizontal: 3,
-      borderRadius: sw(100),
+      width: '100%',
+      height: '100%',
+      marginVertical: sw(12),
+      borderRadius: sw(10),
     },
   });
 };

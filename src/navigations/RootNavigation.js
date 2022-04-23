@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {StackActions, CommonActions} from '@react-navigation/native';
+import { StackActions, CommonActions } from '@react-navigation/native';
 
 import Route from './Route';
 
@@ -10,11 +10,11 @@ const routeNameRef = React.createRef();
 var previousRouteName = '';
 var currentRouteName = '';
 
-const getScreenOptions = route => {
+const getScreenOptions = (route) => {
   // console.log('RootNavigation -> getScreenOptions -> route:', route);
 
   let defaultOption = {
-    cardStyle: {backgroundColor: 'transparent'},
+    cardStyle: { backgroundColor: 'transparent' },
     cardOverlayEnabled: true,
     animationEnabled: false,
     transparentCard: true,
@@ -23,7 +23,7 @@ const getScreenOptions = route => {
 
   let modalOption = {
     ...defaultOption,
-    cardStyleInterpolator: ({current: {progress}}) => ({
+    cardStyleInterpolator: ({ current: { progress } }) => ({
       cardStyle: {
         opacity: progress.interpolate({
           inputRange: [0, 0.5, 0.9, 1],
@@ -44,13 +44,15 @@ const getScreenOptions = route => {
   switch (routeName) {
     case Route.MAIN_STACK:
       return defaultOption;
+    case Route.BOTTOM_FONT_STYLE_SELECTION_MODAL:
+      return modalOption;
     default:
       return null;
   }
 };
 
 // Gets the current screen from navigation state
-const getActiveRouteName = state => {
+const getActiveRouteName = (state) => {
   const route = state.routes[state.index];
 
   if (route.state) {
@@ -61,7 +63,7 @@ const getActiveRouteName = state => {
   return route.name;
 };
 
-const onStateChange = state => {
+const onStateChange = (state) => {
   console.log(
     'RootStackScreen -> onStateChange -> currentRouteName:',
     navigationRef.current.getCurrentRoute().name,
@@ -112,9 +114,9 @@ function replace(...args) {
 
 function remove(screenName) {
   if (isReadyRef.current && navigationRef.current) {
-    navigationRef.current?.dispatch(state => {
+    navigationRef.current?.dispatch((state) => {
       // Remove the home route from the stack
-      const routes = state.routes.filter(r => r.name !== screenName);
+      const routes = state.routes.filter((r) => r.name !== screenName);
       console.log('RootNavigation -> routes: ', routes);
       return CommonActions.reset({
         ...state,
