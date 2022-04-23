@@ -40,9 +40,9 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
 
   let getNoteContentLayoutList = [];
   const [noteContentLayoutList, setNoteContentLayoutList] = useState([]);
-
-  const inputRef = useRef(null);
   const [isShowFontIcon, setIsShowFontIcon] = useState(false);
+
+  const [editingTextIndex, setEditingTextIndex] = useState(null);
 
   const bottomBtnList = [
     {
@@ -60,32 +60,29 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     {
       icon: <PenIcon />,
       onPress: () => {
-        if (
-          noteContentLayoutList.length === 0 ||
-          noteContentLayoutList[noteContentLayoutList.length - 1].type !==
-            'TEXT'
-        ) {
-          getNoteContentLayoutList = [
-            ...noteContentLayoutList,
-            {
-              type: 'TEXT',
-              value: '',
-              fontSize: sw(18),
-              fontStyle: theme.fonts.weight.light,
-              align: 'left',
-              paddingLeft: sw(0),
-              inputRef: null,
-            },
-          ];
-          setNoteContentLayoutList(getNoteContentLayoutList);
-        }
+        getNoteContentLayoutList = [
+          ...noteContentLayoutList,
+          {
+            type: 'TEXT',
+            value: '',
+            fontStyle: 'normal',
+            fontSizeOption: 'B',
+            fontSize: sw(18),
+            fontWeight: '300',
+            textDecorationLine: null,
+            align: 'left',
+            paddingLeft: sw(0),
+            paddingRight: sw(0),
+          },
+        ];
+        setNoteContentLayoutList(getNoteContentLayoutList);
       },
     },
   ];
 
   useEffect(() => {
     console.log('noteContentLayoutList:', noteContentLayoutList);
-  }, [noteContentLayoutList]);
+  }, [noteContentLayoutList, editingTextIndex]);
 
   const onChangeTitle = (val) => {
     setInputTitle(val);
@@ -98,7 +95,29 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
   };
 
   const onFontIconPressed = () => {
-    navigation.navigate(Route.BOTTOM_FONT_STYLE_SELECTION_MODAL);
+    navigation.navigate(Route.BOTTOM_FONT_STYLE_SELECTION_MODAL, {
+      getSelectCallBack: getSelectFontFormatCallBack,
+      selectedCallBack: noteContentLayoutList[editingTextIndex],
+    });
+  };
+
+  const getSelectFontFormatCallBack = (item) => {
+    let newNoteContentLayoutList = [...noteContentLayoutList];
+    newNoteContentLayoutList[editingTextIndex].fontStyle =
+      item.selectedFontStyle;
+    newNoteContentLayoutList[editingTextIndex].fontSizeOption =
+      item.selectedFontSizeOption;
+    newNoteContentLayoutList[editingTextIndex].fontSize = item.selectedFontSize;
+    newNoteContentLayoutList[editingTextIndex].fontWeight =
+      item.selectedFontWeight;
+    newNoteContentLayoutList[editingTextIndex].textDecorationLine =
+      item.selectedTextDecorationLine;
+    newNoteContentLayoutList[editingTextIndex].align = item.selectedAlignStyle;
+    newNoteContentLayoutList[editingTextIndex].paddingLeft =
+      item.selectedPaddingLeft;
+    newNoteContentLayoutList[editingTextIndex].paddingRight =
+      item.selectedPaddingRight;
+    setNoteContentLayoutList(newNoteContentLayoutList);
   };
 
   const accessImagePickerFunc = () => {
@@ -156,26 +175,44 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     );
   };
 
+  const getItemFontFormat = (item, index) => {
+    return {
+      color: '#FFF',
+      fontStyle: item.fontStyle,
+      fontSize: item.fontSize,
+      fontWeight: item.fontWeight,
+      textDecorationLine: item.textDecorationLine,
+      textAlign: item.align,
+      paddingLeft: item.paddingLeft,
+      paddingRight: item.paddingRight,
+    };
+  };
+
   const renderTextInput = (item, index) => {
     return (
       <TextInput
+        onKeyPress={({ nativeEvent }) => {
+          if (nativeEvent.key === 'Backspace' && item.value === '') {
+            let newNoteContentLayoutList = [...noteContentLayoutList];
+            newNoteContentLayoutList.splice(index, 1);
+            setNoteContentLayoutList(newNoteContentLayoutList);
+          }
+        }}
         key={index}
         value={item.value}
         onChangeText={(val) => {
           onChangeContent(val, index);
         }}
-        style={styles.inputContentText}
+        style={getItemFontFormat(item, index)}
         multiline={true}
         placeholder={'Add Text...'}
         placeholderTextColor={'#B6B6B6'}
-        ref={inputRef}
         onBlur={() => {
-          console.log('inputRef:', inputRef.current.isFocused());
           setIsShowFontIcon(false);
         }}
         onFocus={() => {
-          console.log('inputRef:', inputRef.current.isFocused());
           setIsShowFontIcon(true);
+          setEditingTextIndex(index);
         }}
       />
     );

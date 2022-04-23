@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import _ from 'lodash';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -29,19 +29,41 @@ export default function BottomFontStyleSelectionModal({ route, navigation }) {
   const theme = AppDefaultTheme.settings;
   const styles = getStyle(insets, theme);
   const [isOpenBottomSheet, setIsOpenBottomSheet] = useState(true);
-  let selectCallBack = _.get(route, 'params.getSelectCallBack', () => {});
+  let getSelectCallBack = _.get(route, 'params.getSelectCallBack', () => {});
+  let selectedCallBack = _.get(route, 'params.selectedCallBack', null);
 
-  const [selectedFontSize, setSelectedFontSize] = useState('T');
+  const [selectedFontSize, setSelectedFontSize] = useState(
+    selectedCallBack.fontSizeOption,
+  );
 
-  const [selectedFontStyle, setSelectedFontStyle] = useState('B');
-  const [isSelectedBold, setIsSelectedBold] = useState(true);
-  const [isSelectedItalic, setIsSelectedItalic] = useState(false);
-  const [isSelectedUnderline, setIsSelectedUnderline] = useState(false);
-  const [isSelectedLineThrough, setIsSelectedLineThrough] = useState(false);
+  const [isSelectedBold, setIsSelectedBold] = useState(
+    selectedCallBack.fontWeight === 'bold' ? true : false,
+  );
+  const [isSelectedItalic, setIsSelectedItalic] = useState(
+    selectedCallBack.fontStyle === 'normal' ? false : true,
+  );
+  const [isSelectedUnderline, setIsSelectedUnderline] = useState(
+    selectedCallBack.textDecorationLine &&
+      selectedCallBack.textDecorationLine.includes('underline')
+      ? true
+      : false,
+  );
+  const [isSelectedLineThrough, setIsSelectedLineThrough] = useState(
+    selectedCallBack.textDecorationLine &&
+      selectedCallBack.textDecorationLine.includes('line-through')
+      ? true
+      : false,
+  );
 
-  const [selectedAlignStyle, setSeletedAlignStyle] = useState('left');
-  const [selectedPaddingRight, setSelectedPaddingRight] = useState(0);
-  const [selectedPaddingLeft, setSelectedPaddingLeft] = useState(0);
+  const [selectedAlignStyle, setSeletedAlignStyle] = useState(
+    selectedCallBack.align,
+  );
+  const [selectedPaddingRight, setSelectedPaddingRight] = useState(
+    selectedCallBack.paddingRight,
+  );
+  const [selectedPaddingLeft, setSelectedPaddingLeft] = useState(
+    selectedCallBack.paddingLeft,
+  );
 
   const fontSizeList = [
     {
@@ -116,6 +138,42 @@ export default function BottomFontStyleSelectionModal({ route, navigation }) {
       style: sw(20),
     },
   ];
+
+  useEffect(() => {
+    getSelectCallBack({
+      selectedFontSizeOption: selectedFontSize,
+      selectedFontSize: _.find(fontSizeList, { option: selectedFontSize }).size,
+      selectedFontStyle: isSelectedItalic ? 'italic' : 'normal',
+      selectedFontWeight: isSelectedBold
+        ? 'bold'
+        : selectedFontSize === 'B'
+        ? '300'
+        : '400',
+      selectedTextDecorationLine:
+        isSelectedUnderline && isSelectedLineThrough
+          ? 'underline line-through'
+          : isSelectedUnderline
+          ? 'underline'
+          : isSelectedLineThrough
+          ? 'line-through'
+          : null,
+      selectedAlignStyle: selectedAlignStyle,
+      selectedPaddingRight:
+        selectedAlignStyle === 'right' ? selectedPaddingRight : 0,
+      selectedPaddingLeft:
+        selectedAlignStyle === 'left' ? selectedPaddingLeft : 0,
+    });
+  }, [
+    selectedFontSize,
+    isSelectedBold,
+    isSelectedItalic,
+    isSelectedUnderline,
+    isSelectedLineThrough,
+    selectedAlignStyle,
+    selectedPaddingRight,
+    selectedPaddingLeft,
+    selectedCallBack,
+  ]);
 
   // Get Style func
   const fontSizeStyle = (style, size) => {
@@ -207,8 +265,12 @@ export default function BottomFontStyleSelectionModal({ route, navigation }) {
   const updatePaddingStyleSelection = (title) => {
     if (title === 'right' && selectedAlignStyle === 'right') {
       setSelectedPaddingRight(selectedPaddingRight + 20);
+    } else if (title === 'left' && selectedAlignStyle === 'right') {
+      setSelectedPaddingRight(selectedPaddingRight - 20);
     } else if (title === 'left' && selectedAlignStyle === 'left') {
       setSelectedPaddingLeft(selectedPaddingLeft + 20);
+    } else if (title === 'right' && selectedAlignStyle === 'left') {
+      setSelectedPaddingLeft(selectedPaddingLeft - 20);
     }
   };
 
