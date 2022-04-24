@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   StyleSheet,
@@ -7,8 +7,7 @@ import {
   Platform,
   TextInput,
   Image,
-  ScrollView,
-  Keyboard,
+  TouchableOpacity,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -16,6 +15,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {
   AosShareIcon,
   CameraIcon,
+  CloseIcon,
+  DeleteIcon,
   FontIcon,
   IosShareIcon,
   PenIcon,
@@ -23,12 +24,12 @@ import {
 } from '../../assets/images';
 import AppPressable from '../../components/AppPressable';
 import BaseHeader from '../../components/BaseHeader';
+import Route from '../../navigations/Route';
 import CommonUtil from '../../utils/CommonUtil';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import Route from '../../navigations/Route';
 
 const CreateAndEditNoteScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -43,6 +44,8 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
   const [isShowFontIcon, setIsShowFontIcon] = useState(false);
 
   const [editingTextIndex, setEditingTextIndex] = useState(null);
+  const [selectingImageIndex, setSelectingImageIndex] = useState(null);
+  const [isShowLongPressHandle, setIsShowLongPressHandle] = useState(false);
 
   const bottomBtnList = [
     {
@@ -165,13 +168,46 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     });
   };
 
+  const renderImageLongPressHandleView = (item, index) => {
+    return (
+      <View style={styles.longPressImageView}>
+        <AppPressable
+          onPress={() => {
+            setIsShowLongPressHandle(false);
+          }}>
+          <CloseIcon width={sw(18)} height={sw(18)} />
+        </AppPressable>
+        <View style={styles.longPressLineSeparator} />
+        <AppPressable
+          onPress={() => {
+            let newNoteContentLayoutList = [...noteContentLayoutList];
+            newNoteContentLayoutList.splice(index, 1);
+            setNoteContentLayoutList(newNoteContentLayoutList);
+            setIsShowLongPressHandle(false);
+          }}>
+          <DeleteIcon />
+        </AppPressable>
+      </View>
+    );
+  };
+
   const renderImageView = (item, index) => {
     return (
-      <Image
-        source={{ uri: item.image.path }}
-        style={styles.images}
-        key={index}
-      />
+      <TouchableOpacity
+        onLongPress={() => {
+          setIsShowLongPressHandle(true);
+          setSelectingImageIndex(index);
+        }}
+        style={{ marginVertical: sw(12) }}>
+        <Image
+          source={{ uri: item.image.path }}
+          style={styles.images}
+          key={index}
+        />
+        {isShowLongPressHandle &&
+          selectingImageIndex === index &&
+          renderImageLongPressHandleView(item, index)}
+      </TouchableOpacity>
     );
   };
 
@@ -339,6 +375,23 @@ const getStyle = (theme) => {
       height: '100%',
       marginVertical: sw(12),
       borderRadius: sw(10),
+    },
+    longPressImageView: {
+      flexDirection: 'row',
+      width: sw(100),
+      height: sw(40),
+      alignSelf: 'flex-end',
+      marginTop: sw(-60),
+      backgroundColor: '#252525',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderRadius: sw(30),
+      paddingHorizontal: sw(16),
+    },
+    longPressLineSeparator: {
+      width: sw(2),
+      height: sw(40),
+      backgroundColor: '#424450',
     },
   });
 };

@@ -8,6 +8,7 @@ import CenterAlignIcon from '~src/assets/images/icons/center-align-icon.svg';
 import CloseIcon from '~src/assets/images/icons/close-icon.svg';
 import CreateNoteIcon from '~src/assets/images/icons/create-note-icon.svg';
 import CreateTaskIcon from '~src/assets/images/icons/create-task-icon.svg';
+import DeleteIcon from '~src/assets/images/icons/delete-icon.svg';
 import FontIcon from '~src/assets/images/icons/font-icon.svg';
 import IosShareIcon from '~src/assets/images/icons/ios-share-icon.svg';
 import LeftAlignIcon from '~src/assets/images/icons/left-align-icon.svg';
@@ -51,4 +52,5 @@ export {
   CenterAlignIcon,
   PaddingRightIcon,
   PaddingLeftIcon,
+  DeleteIcon,
 };
