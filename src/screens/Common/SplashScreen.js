@@ -30,6 +30,10 @@ export default function SplashScreen({ navigation }) {
     (action) => action.user.loadRecentTaskList,
   );
 
+  const loadRecentNoteList = useStoreActions(
+    (action) => action.user.loadRecentNoteList,
+  );
+
   useEffect(() => {
     console.log('SplashScreen -> useEffect');
 
@@ -48,8 +52,13 @@ export default function SplashScreen({ navigation }) {
     await setDefaultLocale();
     await loadSavedAppValue();
 
+    // Get Task List
     let taskList = await StorageService.getTaskList();
     loadRecentTaskList(taskList);
+
+    // Get Note List
+    let noteList = await StorageService.getNoteList();
+    loadRecentNoteList(noteList);
 
     goNextPage();
 

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { useStoreActions, useStoreState } from 'easy-peasy';
+import _ from 'lodash';
 import {
   StyleSheet,
   Text,
@@ -11,6 +13,7 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   AosShareIcon,
@@ -25,22 +28,39 @@ import {
 import AppPressable from '../../components/AppPressable';
 import BaseHeader from '../../components/BaseHeader';
 import Route from '../../navigations/Route';
+import StorageService from '../../services/StorageService';
 import CommonUtil from '../../utils/CommonUtil';
+import NoteHelper from '../../utils/NoteHelper';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
 
-const CreateAndEditNoteScreen = ({ navigation }) => {
+const CreateAndEditNoteScreen = ({ navigation, route }) => {
   const { t, locale, setLocale } = useLocalization();
   const theme = AppDefaultTheme.settings;
   const styles = getStyle(theme);
 
-  const [inputTitle, setInputTitle] = useState(null);
-  const [inputDate, setInputDate] = useState(CommonUtil.getMomentToday());
+  const loadRecentNoteList = useStoreActions(
+    (action) => action.user.loadRecentNoteList,
+  );
+  const recentNoteList = useStoreState((state) => state.user.recentNoteList);
+  const isCreateNote = _.get(route, 'params.isCreateNote', false);
+  const selectedNoteItem = _.get(route, 'params.selectedNoteItem', []);
+
+  const selectedTitle = _.get(selectedNoteItem, 'title', '');
+  const createAt = _.get(selectedNoteItem, 'createAt', '');
+  const noteContent = _.get(selectedNoteItem, 'content', []);
+  const selectedUid = _.get(selectedNoteItem, 'uid', '');
+
+  const [inputTitle, setInputTitle] = useState(selectedTitle);
+  const [inputDate, setInputDate] = useState(
+    createAt ? createAt : CommonUtil.getMomentToday(),
+  );
 
   let getNoteContentLayoutList = [];
-  const [noteContentLayoutList, setNoteContentLayoutList] = useState([]);
+  const [noteContentLayoutList, setNoteContentLayoutList] =
+    useState(noteContent);
   const [isShowFontIcon, setIsShowFontIcon] = useState(false);
 
   const [editingTextIndex, setEditingTextIndex] = useState(null);
@@ -85,6 +105,7 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
 
   useEffect(() => {
     console.log('noteContentLayoutList:', noteContentLayoutList);
+    console.log('selectedNoteItem:', selectedNoteItem);
   }, [noteContentLayoutList, editingTextIndex]);
 
   const onChangeTitle = (val) => {
@@ -104,25 +125,33 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     });
   };
 
-  const getSelectFontFormatCallBack = (item) => {
-    let newNoteContentLayoutList = [...noteContentLayoutList];
-    newNoteContentLayoutList[editingTextIndex].fontStyle =
-      item.selectedFontStyle;
-    newNoteContentLayoutList[editingTextIndex].fontSizeOption =
-      item.selectedFontSizeOption;
-    newNoteContentLayoutList[editingTextIndex].fontSize = item.selectedFontSize;
-    newNoteContentLayoutList[editingTextIndex].fontWeight =
-      item.selectedFontWeight;
-    newNoteContentLayoutList[editingTextIndex].textDecorationLine =
-      item.selectedTextDecorationLine;
-    newNoteContentLayoutList[editingTextIndex].align = item.selectedAlignStyle;
-    newNoteContentLayoutList[editingTextIndex].paddingLeft =
-      item.selectedPaddingLeft;
-    newNoteContentLayoutList[editingTextIndex].paddingRight =
-      item.selectedPaddingRight;
-    setNoteContentLayoutList(newNoteContentLayoutList);
+  const onDonePressed = () => {
+    let data = {
+      title: inputTitle,
+      content: noteContentLayoutList,
+      createAt: inputDate,
+      uid: isCreateNote ? uuidv4() : selectedUid,
+    };
+    if (isCreateNote) {
+      let newNoteList = recentNoteList;
+      newNoteList.push(data);
+      StorageService.setNoteList(newNoteList);
+      NoteHelper.getNoteList(loadRecentNoteList);
+    } else {
+      recentNoteList.map((item) => {
+        if (item.uid === selectedUid) {
+          item.title = data.title;
+          item.content = data.content;
+          item.createAt = CommonUtil.getMomentDate(CommonUtil.getMomentToday());
+        }
+      });
+      StorageService.setNoteList(recentNoteList);
+      NoteHelper.getNoteList(loadRecentNoteList);
+    }
+    navigation.goBack();
   };
 
+  // Insert Image Handle
   const accessImagePickerFunc = () => {
     ImagePicker.openPicker({
       width: 1000,
@@ -194,6 +223,7 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
   const renderImageView = (item, index) => {
     return (
       <TouchableOpacity
+        key={index}
         onLongPress={() => {
           setIsShowLongPressHandle(true);
           setSelectingImageIndex(index);
@@ -209,6 +239,27 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
           renderImageLongPressHandleView(item, index)}
       </TouchableOpacity>
     );
+  };
+  ////
+
+  // Insert Text Handle
+  const getSelectFontFormatCallBack = (item) => {
+    let newNoteContentLayoutList = [...noteContentLayoutList];
+    newNoteContentLayoutList[editingTextIndex].fontStyle =
+      item.selectedFontStyle;
+    newNoteContentLayoutList[editingTextIndex].fontSizeOption =
+      item.selectedFontSizeOption;
+    newNoteContentLayoutList[editingTextIndex].fontSize = item.selectedFontSize;
+    newNoteContentLayoutList[editingTextIndex].fontWeight =
+      item.selectedFontWeight;
+    newNoteContentLayoutList[editingTextIndex].textDecorationLine =
+      item.selectedTextDecorationLine;
+    newNoteContentLayoutList[editingTextIndex].align = item.selectedAlignStyle;
+    newNoteContentLayoutList[editingTextIndex].paddingLeft =
+      item.selectedPaddingLeft;
+    newNoteContentLayoutList[editingTextIndex].paddingRight =
+      item.selectedPaddingRight;
+    setNoteContentLayoutList(newNoteContentLayoutList);
   };
 
   const getItemFontFormat = (item, index) => {
@@ -265,6 +316,7 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
     });
     return <View style={{ flex: 1 }}>{contentViewList}</View>;
   };
+  ////
 
   const renderBottomBtnView = () => {
     return (
@@ -293,8 +345,10 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
                 </View>
               </AppPressable>
             )}
-            {Platform.OS === 'ios' ? <IosShareIcon /> : <AosShareIcon />}
-            <Text style={styles.doneText}>Done</Text>
+            {/* {Platform.OS === 'ios' ? <IosShareIcon /> : <AosShareIcon />} */}
+            <AppPressable onPress={onDonePressed}>
+              <Text style={styles.doneText}>Done</Text>
+            </AppPressable>
           </View>
         }
       />
@@ -310,7 +364,7 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
             style={styles.inputTitleText}
           />
           <Text style={styles.dateText}>
-            {CommonUtil.getMomentDate(inputDate)}
+            {isCreateNote ? CommonUtil.getMomentDate(inputDate) : inputDate}
           </Text>
           {renderInputContentView()}
         </View>

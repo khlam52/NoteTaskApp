@@ -30,7 +30,9 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const goNoteCreateScreen = () => {
-    navigation.navigate(Route.CREATE_AND_EDIT_NOTE_SCREEN);
+    navigation.navigate(Route.CREATE_AND_EDIT_NOTE_SCREEN, {
+      isCreateNote: true,
+    });
   };
 
   const renderCreateItemView = (title, icon, callback) => {

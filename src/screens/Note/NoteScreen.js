@@ -1,53 +1,111 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { ScrollView, StyleSheet, Text, View, FlatList } from 'react-native';
+import { useStoreActions, useStoreState } from 'easy-peasy';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
+} from 'react-native';
 
+import AppPressable from '../../components/AppPressable';
+import BaseHeader from '../../components/BaseHeader';
+import Route from '../../navigations/Route';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import { SettingIcon } from '../../assets/images';
-import BaseHeader from '../../components/BaseHeader';
 
 const NoteScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
   const theme = AppDefaultTheme.settings;
   const styles = getStyle(theme);
 
-  const NoteList = [
-    {
-      title: 'Note1',
-      content:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
-    },
-    {
-      title: 'Note2',
-      content:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s ...',
-    },
-    {
-      title: 'Note3',
-      content:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s ...',
-    },
-    {
-      title: 'Note4',
-      content:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s ...',
-    },
-    {
-      title: 'Note5',
-      content:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s ...',
-    },
-  ];
+  const loadRecentNoteList = useStoreActions(
+    (action) => action.user.loadRecentNoteList,
+  );
+
+  const recentNoteList = useStoreState((state) => state.user.recentNoteList);
+
+  const [noteList, setNodeList] = useState(recentNoteList);
+
+  useEffect(() => {
+    console.log('recentNoteList in Note Screen:', recentNoteList);
+    setNodeList(recentNoteList);
+  }, [recentNoteList]);
+
+  const onItemPressed = (item, index) => {
+    navigation.navigate(Route.CREATE_AND_EDIT_NOTE_SCREEN, {
+      selectedNoteItem: recentNoteList[index],
+    });
+  };
+
+  const getItemTextStyle = (item, index) => {
+    return {
+      color: '#FFF',
+      fontStyle: item.fontStyle,
+      fontSize: item.fontSize,
+      fontWeight: item.fontWeight,
+      textDecorationLine: item.textDecorationLine,
+      textAlign: item.align,
+      paddingLeft: item.paddingLeft,
+      paddingRight: item.paddingRight,
+    };
+  };
+
+  const renderTextContentView = (item, index) => {
+    return (
+      <View key={index}>
+        <Text style={getItemTextStyle(item, index)}>{item.value}</Text>
+      </View>
+    );
+  };
+
+  const renderImageContentView = (item, index) => {
+    return (
+      <View key={index}>
+        <Image
+          source={{ uri: item.image.path }}
+          style={styles.images}
+          key={index}
+        />
+      </View>
+    );
+  };
+
+  const renderItemContent = (item, index) => {
+    let contentViewList = [];
+    item.content.map((contentItem, contentIndex) => {
+      if (contentIndex < 2) {
+        if (contentItem.type === 'TEXT') {
+          contentViewList.push(
+            renderTextContentView(contentItem, contentIndex),
+          );
+        } else if (contentItem.type === 'IMAGE') {
+          contentViewList.push(
+            renderImageContentView(contentItem, contentIndex),
+          );
+        }
+      }
+    });
+    return <View key={index}>{contentViewList}</View>;
+  };
 
   const renderItem = ({ item, index }) => {
     return (
-      <View key={index} style={styles.itemView}>
-        <Text style={styles.itemTitle}>{item.title}</Text>
-        <Text style={styles.itemContent}>{item.content}</Text>
-      </View>
+      <AppPressable
+        onPress={() => {
+          onItemPressed(item, index);
+        }}>
+        <View key={index} style={styles.itemView}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Text style={styles.itemTitle}>{item.title}</Text>
+            {renderItemContent(item, index)}
+          </ScrollView>
+        </View>
+      </AppPressable>
     );
   };
 
@@ -57,7 +115,7 @@ const NoteScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.text}>Notes</Text>
         <FlatList
-          data={NoteList}
+          data={noteList}
           numColumns={2}
           renderItem={renderItem}
           keyExtractor={(item, index) => item + index}
@@ -102,6 +160,7 @@ const getStyle = (theme) => {
     },
     itemView: {
       width: sw(164),
+      height: sw(200),
       backgroundColor: '#2A2A32',
       paddingVertical: sw(18),
       paddingHorizontal: sw(12),
@@ -121,6 +180,12 @@ const getStyle = (theme) => {
     itemContent: {
       ...Typography.ts(theme.fonts.weight.light, sw(16)),
       color: '#B6B6B6',
+    },
+    images: {
+      width: sw(140),
+      height: sw(80),
+      marginVertical: sw(12),
+      borderRadius: sw(10),
     },
   });
 };
