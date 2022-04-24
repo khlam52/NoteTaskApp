@@ -17,6 +17,7 @@ import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
+import { NoNoteIcon } from '../../assets/images';
 
 const NoteScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -109,6 +110,13 @@ const NoteScreen = ({ navigation }) => {
     );
   };
 
+  const noResultScreen = () => (
+    <View style={{ alignItems: 'center', marginTop: sw(150) }}>
+      <NoNoteIcon />
+      <Text style={styles.addNoteText}>Add Note</Text>
+    </View>
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <BaseHeader notShowBackIcon={true} />
@@ -130,6 +138,7 @@ const NoteScreen = ({ navigation }) => {
               />
             );
           }}
+          ListEmptyComponent={noResultScreen}
         />
       </View>
     </View>
@@ -186,6 +195,11 @@ const getStyle = (theme) => {
       height: sw(80),
       marginVertical: sw(12),
       borderRadius: sw(10),
+    },
+    addNoteText: {
+      ...Typography.ts(theme.fonts.weight.bold, sw(36)),
+      color: '#2A2A32',
+      marginTop: sw(46),
     },
   });
 };

@@ -37,8 +37,8 @@ export default function TabBar({ state, descriptors, navigation }) {
         icon = (
           <PlusIcon
             fill={focused ? '#FFF' : '#CCCCCC'}
-            width={sw(60)}
-            height={sw(60)}
+            width={sw(50)}
+            height={sw(50)}
           />
         );
         break;

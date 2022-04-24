@@ -15,6 +15,7 @@ import LeftAlignIcon from '~src/assets/images/icons/left-align-icon.svg';
 import NavNoteIcon from '~src/assets/images/icons/nav-note-icon.svg';
 import NavPlusIcon from '~src/assets/images/icons/nav-plus-button.svg';
 import NavTaskIcon from '~src/assets/images/icons/nav-task-icon.svg';
+import NoNoteIcon from '~src/assets/images/icons/no-note-icon.svg';
 import PaddingLeftIcon from '~src/assets/images/icons/padding-left-icon.svg';
 import PaddingRightIcon from '~src/assets/images/icons/padding-right-icon.svg';
 import PenIcon from '~src/assets/images/icons/pen-icon.svg';
@@ -53,4 +54,5 @@ export {
   PaddingRightIcon,
   PaddingLeftIcon,
   DeleteIcon,
+  NoNoteIcon,
 };
