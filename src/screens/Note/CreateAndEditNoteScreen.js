@@ -263,7 +263,7 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
         contentViewList.push(renderImageView(item, index));
       }
     });
-    return <View>{contentViewList}</View>;
+    return <View style={{ flex: 1 }}>{contentViewList}</View>;
   };
 
   const renderBottomBtnView = () => {
@@ -300,18 +300,20 @@ const CreateAndEditNoteScreen = ({ navigation }) => {
       />
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
-        scrollEnabled={true}
-        style={styles.container}>
-        <TextInput
-          value={inputTitle}
-          onChangeText={onChangeTitle}
-          placeholder={'Input Title'}
-          style={styles.inputTitleText}
-        />
-        <Text style={styles.dateText}>
-          {CommonUtil.getMomentDate(inputDate)}
-        </Text>
-        {renderInputContentView()}
+        extraScrollHeight={100}
+        enableOnAndroid={true}>
+        <View style={styles.container}>
+          <TextInput
+            value={inputTitle}
+            onChangeText={onChangeTitle}
+            placeholder={'Input Title'}
+            style={styles.inputTitleText}
+          />
+          <Text style={styles.dateText}>
+            {CommonUtil.getMomentDate(inputDate)}
+          </Text>
+          {renderInputContentView()}
+        </View>
       </KeyboardAwareScrollView>
 
       {renderBottomBtnView()}
@@ -372,7 +374,7 @@ const getStyle = (theme) => {
     },
     images: {
       width: '100%',
-      height: '100%',
+      height: sw(300),
       marginVertical: sw(12),
       borderRadius: sw(10),
     },
