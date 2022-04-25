@@ -91,6 +91,13 @@ const TaskCreateScreen = ({ navigation }) => {
     console.log('newTaskList:', newTaskList);
     StorageService.setTaskList(newTaskList);
     TaskHelper.getTaskList(loadRecentTaskList);
+
+    if (isSelectSubTask && selectedSubTaskUnder) {
+      TaskHelper.reCorrectTaskListBySubtask(recentTaskList, loadRecentTaskList);
+    } else {
+      TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
+    }
+
     navigation.goBack();
   };
 
