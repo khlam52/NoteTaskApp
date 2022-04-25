@@ -16,6 +16,9 @@ import useLocalization from '~src/contexts/i18n';
 // import useAppTheme from '~src/contexts/theme';
 import { sw } from '~src/styles/Mixins';
 import TabBar from './TabBar';
+import { useStoreActions } from 'easy-peasy';
+import TaskHelper from '../utils/TaskHelper';
+import NoteHelper from '../utils/NoteHelper';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,6 +26,14 @@ export const TabStack = (props) => {
   const insets = useSafeAreaInsets();
   const { locale, t } = useLocalization();
   const { showLoading, hideLoading } = useAppContext();
+
+  const loadRecentTaskList = useStoreActions(
+    (action) => action.user.loadRecentTaskList,
+  );
+
+  const loadRecentNoteList = useStoreActions(
+    (action) => action.user.loadRecentNoteList,
+  );
 
   const TAB1 = 'TAB1';
   const TAB2 = 'TAB2';
@@ -78,7 +89,9 @@ export const TabStack = (props) => {
             },
           }}
           listeners={() => ({
-            tabPress: async (event) => {},
+            tabPress: async (event) => {
+              TaskHelper.getTaskList(loadRecentTaskList);
+            },
           })}
         />
         <Tab.Screen
@@ -102,7 +115,9 @@ export const TabStack = (props) => {
             },
           }}
           listeners={() => ({
-            tabPress: async (event) => {},
+            tabPress: async (event) => {
+              NoteHelper.getNoteList(loadRecentNoteList);
+            },
           })}
         />
       </Tab.Navigator>

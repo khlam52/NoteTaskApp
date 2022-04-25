@@ -161,7 +161,6 @@ const CreateAndEditNoteScreen = ({ navigation, route }) => {
       multiple: false,
       includeBase64: true,
     }).then((images) => {
-      console.log(images);
       if (images) {
         getNoteContentLayoutList = [
           ...noteContentLayoutList,
@@ -183,7 +182,6 @@ const CreateAndEditNoteScreen = ({ navigation, route }) => {
       freeStyleCropEnabled: true,
       includeBase64: true,
     }).then((images) => {
-      console.log(images);
       if (images) {
         getNoteContentLayoutList = [
           ...noteContentLayoutList,
@@ -438,6 +436,7 @@ const getStyle = (theme) => {
       height: sw(40),
       alignSelf: 'flex-end',
       marginTop: sw(-60),
+      marginRight: sw(20),
       backgroundColor: '#252525',
       alignItems: 'center',
       justifyContent: 'space-between',
