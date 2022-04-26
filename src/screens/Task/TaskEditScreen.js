@@ -196,7 +196,11 @@ const TaskEditScreen = ({ navigation, route }) => {
           <AppButton
             text={'Done'}
             onPress={onDoneBtnPressed}
-            disabled={!inputTitle ? true : false}
+            disabled={
+              !inputTitle || (isSelectSubTask && !selectedSubTaskUnder)
+                ? true
+                : false
+            }
           />
         </View>
       </KeyboardAwareScrollView>

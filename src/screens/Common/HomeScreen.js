@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import BaseHeader from '../../components/BaseHeader';
 import useLocalization from '~src/contexts/i18n';
@@ -55,6 +55,7 @@ const HomeScreen = ({ navigation }) => {
       <BaseHeader notShowBackIcon={true} />
       <View style={styles.container}>
         <Text style={styles.text}>Note Space</Text>
+        <Text style={styles.versionText}>v 1.0.0</Text>
         {renderCreateItemView(
           'Create Task',
           <CreateTaskIcon />,
@@ -81,6 +82,11 @@ const getStyle = (theme) => {
       ...Typography.ts(theme.fonts.weight.bold, sw(45)),
       color: '#FFF',
       textAlign: 'center',
+      marginBottom: sw(12),
+    },
+    versionText: {
+      ...Typography.ts(theme.fonts.weight.regular, sw(18)),
+      color: '#B6B6B6',
       marginBottom: sw(60),
     },
     settingView: {
@@ -95,7 +101,7 @@ const getStyle = (theme) => {
       alignItems: 'center',
       borderRadius: sw(20),
       paddingTop: sw(26),
-      marginVertical: sw(28),
+      marginVertical: Platform.OS === 'ios' ? sw(28) : sw(20),
       shadowOpacity: 0.5,
       shadowRadius: 30,
       shadowOffset: { 0: 10 },

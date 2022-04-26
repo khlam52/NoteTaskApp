@@ -167,7 +167,11 @@ const TaskCreateScreen = ({ navigation }) => {
           <AppButton
             text={'Create'}
             onPress={onCreateBtnPressed}
-            disabled={!inputTitle ? true : false}
+            disabled={
+              !inputTitle || (isSelectSubTask && !selectedSubTaskUnder)
+                ? true
+                : false
+            }
           />
         </View>
       </KeyboardAwareScrollView>

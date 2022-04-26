@@ -337,7 +337,7 @@ const CreateAndEditNoteScreen = ({ navigation, route }) => {
       <BaseHeader
         rightElement={
           <View style={styles.headerRightView}>
-            {isShowFontIcon && (
+            {isShowFontIcon && Platform.OS === 'ios' && (
               <AppPressable onPress={onFontIconPressed}>
                 <View style={{ marginRight: sw(18) }}>
                   <FontIcon />
