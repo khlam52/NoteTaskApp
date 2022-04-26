@@ -13,7 +13,6 @@ import NoteScreen from '../screens/Note/NoteScreen';
 import TaskCreateScreen from '../screens/Task/TaskCreateScreen';
 import TaskEditScreen from '../screens/Task/TaskEditScreen';
 import TaskScreen from '../screens/Task/TaskScreen';
-import TempTestScreen from '../screens/TempTestScreen';
 import Route from './Route';
 import { TabStack } from './TabStack';
 import useAppContext from '~src/contexts/app';
@@ -23,7 +22,6 @@ let deviceBrand = DeviceInfo.getBrand();
 
 // Define multiple groups of screens in objects like this
 const commonScreens = {};
-commonScreens[Route.TEMP_TEST_SCREEN] = TempTestScreen;
 commonScreens[Route.TASK_CREATE_SCREEN] = TaskCreateScreen;
 commonScreens[Route.TASK_EDIT_SCREEN] = TaskEditScreen;
 commonScreens[Route.CREATE_AND_EDIT_NOTE_SCREEN] = CreateAndEditNoteScreen;

@@ -36,10 +36,7 @@ export default function SplashScreen({ navigation }) {
 
   useEffect(() => {
     console.log('SplashScreen -> useEffect');
-
-    if (appState.isFirstOpen) {
-      loadData();
-    }
+    loadData();
   }, []);
 
   const goNextPage = async () => {
