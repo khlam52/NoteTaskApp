@@ -3,25 +3,32 @@ import React, { useState } from 'react';
 
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import _ from 'lodash';
-import { StyleSheet, Text, View, LayoutAnimation } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  LayoutAnimation,
+  Animated,
+} from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 
 import {
   ArrowDownIcon,
   ArrowRightIcon,
   ArrowUpIcon,
+  DeleteIcon,
   TickIcon,
   UnTickIcon,
 } from '../../assets/images';
 import AppPressable from '../../components/AppPressable';
 import { AppDefaultTheme } from '../../contexts/theme/AppTheme';
 import Route from '../../navigations/Route';
-import StorageService from '../../services/StorageService';
+import TaskHelper from '../../utils/TaskHelper';
 import useAppContext from '~src/contexts/app';
 import useLocalization from '~src/contexts/i18n';
 import RootNavigation from '~src/navigations/RootNavigation';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import TaskHelper from '../../utils/TaskHelper';
 
 TaskItemView.defaultProps = {
   item: null,
@@ -61,45 +68,76 @@ export default function TaskItemView({
     });
   };
 
+  // Delete Item Swipe Handle
+  const renderRightActions = (progress, dragX) => {
+    const trans = dragX.interpolate({
+      inputRange: [0, 50, 100, 101],
+      outputRange: [0, 0.25, 0.7, 1],
+    });
+    return (
+      <AppPressable
+        onPress={() => {
+          TaskHelper.deleteTaskFunc(
+            recentTaskList,
+            loadRecentTaskList,
+            item,
+            index,
+          );
+        }}>
+        <Animated.View
+          style={{
+            ...styles.deleteBtnView,
+            transform: [{ translateX: trans }],
+          }}>
+          <DeleteIcon />
+        </Animated.View>
+      </AppPressable>
+    );
+  };
+
   let node = _.get(item, 'node', '');
   return (
     node === 1 && (
       <View>
-        <AppPressable
-          onPress={() => {
-            onItemPressed(item);
-          }}>
-          <View key={index} style={styles.itemView}>
-            <View style={styles.itemLeftRowView}>
-              <AppPressable onPress={onTickIconPressed}>
-                {isCompleted ? (
-                  <TickIcon fill={'#FFEAA1'} />
+        <Swipeable renderRightActions={renderRightActions} friction={2}>
+          <AppPressable
+            onPress={() => {
+              onItemPressed(item);
+            }}
+            customDisabledStyle={{ opacity: 1 }}>
+            <View key={index} style={styles.itemView}>
+              <View style={styles.itemLeftRowView}>
+                <AppPressable onPress={onTickIconPressed}>
+                  {isCompleted ? (
+                    <TickIcon fill={'#FFEAA1'} />
+                  ) : (
+                    <UnTickIcon stroke={'#FFEAA1'} />
+                  )}
+                </AppPressable>
+                <Text style={styles.itemTitleText}>{item.title}</Text>
+              </View>
+
+              <AppPressable onPress={onItemExtendPress}>
+                {item.subTask.length > 0 ? (
+                  !isItemExtendPressed ? (
+                    <ArrowDownIcon fill={'#FFF'} />
+                  ) : (
+                    <ArrowUpIcon fill={'#FFF'} />
+                  )
                 ) : (
-                  <UnTickIcon stroke={'#FFEAA1'} />
+                  <ArrowRightIcon fill={'#FFF'} />
                 )}
               </AppPressable>
-              <Text style={styles.itemTitleText}>{item.title}</Text>
             </View>
-
-            <AppPressable onPress={onItemExtendPress}>
-              {item.subTask.length > 0 ? (
-                !isItemExtendPressed ? (
-                  <ArrowDownIcon fill={'#FFF'} />
-                ) : (
-                  <ArrowUpIcon fill={'#FFF'} />
-                )
-              ) : (
-                <ArrowRightIcon fill={'#FFF'} />
-              )}
-            </AppPressable>
-          </View>
-        </AppPressable>
+          </AppPressable>
+        </Swipeable>
 
         {isItemExtendPressed &&
           item.subTask.length > 0 &&
           item.subTask.map((subItem, subIndex) => {
             let isSubTaskCompleted =
               subItem.status === 'IN_PROGRESS' ? false : true;
+
             const onSubTickIconPressed = async () => {
               isSubTaskCompleted = !isSubTaskCompleted;
               // Subitem itself
@@ -114,35 +152,69 @@ export default function TaskItemView({
                 loadRecentTaskList,
               );
             };
+
+            // Delete SubItem Swipe Handle
+            const renderSubItemRightActions = (progress, dragX) => {
+              const trans = dragX.interpolate({
+                inputRange: [0, 50, 100, 101],
+                outputRange: [0, 0.25, 0.7, 1],
+              });
+              return (
+                <AppPressable
+                  onPress={() => {
+                    TaskHelper.deleteTaskFunc(
+                      recentTaskList,
+                      loadRecentTaskList,
+                      subItem,
+                      subIndex,
+                      true,
+                    );
+                  }}>
+                  <Animated.View
+                    style={{
+                      ...styles.subItemDeleteBtnView,
+                      transform: [{ translateX: trans }],
+                    }}>
+                    <DeleteIcon />
+                  </Animated.View>
+                </AppPressable>
+              );
+            };
+
             return (
-              <AppPressable
-                onPress={() => {
-                  onItemPressed(subItem);
-                }}>
-                <View
-                  key={subIndex}
-                  style={{ ...styles.itemView, marginLeft: sw(46) }}>
-                  <View style={styles.itemLeftRowView}>
-                    <AppPressable onPress={onSubTickIconPressed}>
-                      {isSubTaskCompleted ? (
-                        <TickIcon
-                          fill={'#D3FFB8'}
-                          width={sw(25)}
-                          height={sw(25)}
-                        />
-                      ) : (
-                        <UnTickIcon
-                          stroke={'#D3FFB8'}
-                          width={sw(25)}
-                          height={sw(25)}
-                        />
-                      )}
-                    </AppPressable>
-                    <Text style={styles.itemTitleText}>{subItem.title}</Text>
+              <Swipeable
+                renderRightActions={renderSubItemRightActions}
+                friction={2}>
+                <AppPressable
+                  onPress={() => {
+                    onItemPressed(subItem);
+                  }}
+                  customDisabledStyle={{ opacity: 1 }}>
+                  <View
+                    key={subIndex}
+                    style={{ ...styles.itemView, marginLeft: sw(46) }}>
+                    <View style={styles.itemLeftRowView}>
+                      <AppPressable onPress={onSubTickIconPressed}>
+                        {isSubTaskCompleted ? (
+                          <TickIcon
+                            fill={'#D3FFB8'}
+                            width={sw(25)}
+                            height={sw(25)}
+                          />
+                        ) : (
+                          <UnTickIcon
+                            stroke={'#D3FFB8'}
+                            width={sw(25)}
+                            height={sw(25)}
+                          />
+                        )}
+                      </AppPressable>
+                      <Text style={styles.itemTitleText}>{subItem.title}</Text>
+                    </View>
+                    <ArrowRightIcon fill={'#FFF'} />
                   </View>
-                  <ArrowRightIcon fill={'#FFF'} />
-                </View>
-              </AppPressable>
+                </AppPressable>
+              </Swipeable>
             );
           })}
       </View>
@@ -170,6 +242,20 @@ const getStyle = (theme, locale) => {
       ...Typography.ts(theme.fonts.weight.regular, sw(16)),
       color: '#FFF',
       paddingLeft: sw(18),
+    },
+    deleteBtnView: {
+      paddingHorizontal: sw(30),
+      paddingVertical: sw(17),
+      backgroundColor: '#2A2A32',
+      borderRadius: sw(20),
+      marginLeft: sw(8),
+    },
+    subItemDeleteBtnView: {
+      paddingHorizontal: sw(30),
+      paddingVertical: sw(13),
+      backgroundColor: '#2A2A32',
+      borderRadius: sw(20),
+      marginLeft: sw(8),
     },
   });
 };

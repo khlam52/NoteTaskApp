@@ -175,6 +175,7 @@ const TaskEditScreen = ({ navigation, route }) => {
                 setSelectedSubTaskUnder={setSelectedSubTaskUnder}
                 setIsItemExtendPressed={setIsItemExtendPressed}
                 isItemExtendPressed={isItemExtendPressed}
+                selecteduid={selecteduid}
               />
             </View>
           )}

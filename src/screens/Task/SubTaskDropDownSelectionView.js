@@ -24,6 +24,7 @@ SubTaskDropDownSelectionView.defaultProps = {
   selectedSubTaskUnder: null,
   setIsItemExtendPressed: () => {},
   isItemExtendPressed: null,
+  selecteduid: null,
 };
 
 export default function SubTaskDropDownSelectionView({
@@ -31,6 +32,7 @@ export default function SubTaskDropDownSelectionView({
   selectedSubTaskUnder,
   setIsItemExtendPressed,
   isItemExtendPressed,
+  selecteduid,
 }) {
   const { t, locale, setLocale } = useLocalization();
   const { showLoading, hideLoading } = useAppContext();
@@ -56,6 +58,7 @@ export default function SubTaskDropDownSelectionView({
   const renderSelectTaskView = () => {
     return recentTaskList.map((item, index) => {
       return (
+        selecteduid !== item.uid &&
         item.node === 1 && (
           <AppPressable
             onPress={() => {

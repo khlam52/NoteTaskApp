@@ -109,9 +109,38 @@ const restructureTaskListFunc = (
   console.log('restructureTaskList:', restructureTaskList);
 };
 
+const deleteTaskFunc = (
+  recentTaskList,
+  loadRecentTaskList,
+  item,
+  index,
+  isSubTask = false,
+) => {
+  console.log('subItem:', item);
+  let newTaskList = [...recentTaskList];
+  recentTaskList.map((deleteItem, deleteIndex) => {
+    if (item.uid === deleteItem.uid) {
+      newTaskList.splice(deleteIndex, 1);
+    }
+    if (!isSubTask) {
+      if (item.uid === deleteItem.parentUid) {
+        console.log('deleteItem:', deleteItem);
+        newTaskList.splice(deleteIndex, 1);
+      }
+    }
+  });
+  console.log('newTaskList:', newTaskList);
+  if (isSubTask) {
+    reCorrectTaskListBySubtask(newTaskList, loadRecentTaskList);
+  } else {
+    reCorrectTaskList(newTaskList, loadRecentTaskList);
+  }
+};
+
 export default {
   getTaskList,
   restructureTaskListFunc,
   reCorrectTaskList,
   reCorrectTaskListBySubtask,
+  deleteTaskFunc,
 };

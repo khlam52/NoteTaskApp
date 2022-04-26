@@ -3,7 +3,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/core';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import _ from 'lodash';
-import { StyleSheet, Text, View, SectionList } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SectionList,
+  LayoutAnimation,
+} from 'react-native';
 
 import BaseHeader from '../../components/BaseHeader';
 import StorageService from '../../services/StorageService';
@@ -47,6 +53,10 @@ const TaskScreen = ({ navigation }) => {
     );
   }, [recentTaskList]);
 
+  const showAnimationView = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  };
+
   const renderSectionHeader = ({ section: { groupName, data } }) => {
     let Datalength = 0;
     data.map((item) => {
@@ -65,6 +75,7 @@ const TaskScreen = ({ navigation }) => {
   };
 
   const renderItem = ({ item, index, section: { groupName } }) => {
+    showAnimationView();
     let isCompleted = groupName === 'Completed' ? true : false;
 
     const onTickIconPressed = () => {
