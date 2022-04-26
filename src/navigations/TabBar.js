@@ -22,11 +22,6 @@ export default function TabBar({ state, descriptors, navigation }) {
     return null;
   }
 
-  const pathX = '357';
-  const pathY = '675';
-  const pathA = '689';
-  const pathB = '706';
-
   const getTabBarIcon = (focused, route) => {
     let icon;
     switch (route) {
@@ -37,8 +32,8 @@ export default function TabBar({ state, descriptors, navigation }) {
         icon = (
           <PlusIcon
             fill={focused ? '#FFF' : '#CCCCCC'}
-            width={sw(50)}
-            height={sw(50)}
+            width={sw(45)}
+            height={sw(45)}
           />
         );
         break;

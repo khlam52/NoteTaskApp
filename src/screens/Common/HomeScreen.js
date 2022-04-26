@@ -42,9 +42,7 @@ const HomeScreen = ({ navigation }) => {
         <View>
           <AppPressable onPress={callback}>
             <View style={styles.btnView}>
-              <View style={styles.plusIconView}>
-                <PlusIcon fill={'#FFF'} width={sw(30)} height={sw(30)} />
-              </View>
+              <PlusIcon fill={'#FFF'} width={sw(25)} height={sw(25)} />
               <Text style={styles.btnTitleText}>{title}</Text>
             </View>
           </AppPressable>
@@ -113,15 +111,6 @@ const getStyle = (theme) => {
       justifyContent: 'center',
       paddingVertical: sw(8),
       marginTop: sw(18),
-    },
-    plusIconView: {
-      shadowOpacity: 0.5,
-      shadowRadius: 6,
-      shadowOffset: { 0: 10 },
-      shadowColor: '#000',
-      elevation: 10,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     btnTitleText: {
       ...Typography.ts(theme.fonts.weight.bold, sw(20)),
