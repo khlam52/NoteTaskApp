@@ -58,14 +58,15 @@ const NoteScreen = ({ navigation }) => {
   useEffect(() => {
     console.log('recentNoteList in Note Screen:', recentNoteList);
     setNodeList(recentNoteList);
+    setSelectedList(NoteHelper.getSeletedList(recentNoteList));
   }, [recentNoteList]);
 
   const showAnimationView = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
 
-  const onDeleteIconPressed = () => {
-    NoteHelper.deleteNoteFunc(
+  const onDeleteIconPressed = async () => {
+    await NoteHelper.deleteNoteFunc(
       selectedList,
       recentNoteList,
       loadRecentNoteList,
@@ -173,7 +174,7 @@ const NoteScreen = ({ navigation }) => {
             });
             setSelectedList(temp);
           }}>
-          {selectedList[index].isSelected ? (
+          {selectedList.length !== 0 && selectedList[index].isSelected ? (
             <TickIcon fill={'#FFEAA1'} width={sw(25)} height={sw(25)} />
           ) : (
             <UnTickIcon

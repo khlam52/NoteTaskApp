@@ -16,32 +16,34 @@ const getSeletedList = (recentNoteList) => {
   let tempList = [];
   recentNoteList.map((item, index) => {
     tempList.push({
-      itemIndex: index,
+      uid: item.uid,
       isSelected: false,
     });
   });
   return tempList;
 };
 
-const deleteNoteFunc = (
+const deleteNoteFunc = async (
   selectedList,
   recentNoteList,
   loadRecentNoteList,
   setNodeList,
 ) => {
   let deletedList = _.filter(selectedList, { isSelected: true });
-  let deletedIndexList = _.map(deletedList, (item) => {
-    return item.itemIndex;
+  let deletedUidList = _.map(deletedList, (item) => {
+    return item.uid;
   });
+  console.log('deletedList:', deletedList);
+  console.log('deletedUidList:', deletedUidList);
   let newNoteList = [...recentNoteList];
   recentNoteList.map((item, index) => {
-    if (deletedIndexList.includes(index)) {
-      newNoteList.splice(index, 1);
+    if (deletedUidList.includes(item.uid)) {
+      newNoteList = _.reject(newNoteList, { uid: item.uid });
     }
   });
   StorageService.setNoteList(newNoteList);
   setNodeList(newNoteList);
-  getNoteList(loadRecentNoteList);
+  await getNoteList(loadRecentNoteList);
 };
 
 export default {
