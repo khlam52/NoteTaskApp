@@ -11,20 +11,18 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
 
 import { TickIcon, UnTickIcon } from '../../assets/images';
 import AppButton from '../../components/AppButton';
 import AppPressable from '../../components/AppPressable';
 import BaseHeader from '../../components/BaseHeader';
-import StorageService from '../../services/StorageService';
 import CommonUtil from '../../utils/CommonUtil';
+import TaskHelper from '../../utils/TaskHelper';
 import SubTaskDropDownSelectionView from './SubTaskDropDownSelectionView';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import TaskHelper from '../../utils/TaskHelper';
 
 const TaskEditScreen = ({ navigation, route }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -127,7 +125,7 @@ const TaskEditScreen = ({ navigation, route }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <BaseHeader title={'Task'} />
+      <BaseHeader title={t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.EDIT_TITLE')} />
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         scrollEnabled={true}
@@ -135,16 +133,18 @@ const TaskEditScreen = ({ navigation, route }) => {
         <TextInput
           value={inputTitle}
           onChangeText={onChangeTitle}
-          placeholder={'Input Task Title'}
+          placeholder={t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.INPUT_TITLE')}
           style={styles.inputTitleText}
           placeholderTextColor={'#B6B6B6'}
         />
-        <Text style={styles.dateText}>{inputDate}</Text>
+        <Text style={styles.dateText}>
+          {TaskHelper.getZhhkTimeFormat(inputDate, locale)}
+        </Text>
         <View style={styles.contentView}>
           <TextInput
             value={inputContent}
             onChangeText={onChangeContent}
-            placeholder={'Add description...'}
+            placeholder={t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.ADD_DESC')}
             style={styles.inputContentText}
             multiline={true}
             placeholderTextColor={'#B6B6B6'}
@@ -157,7 +157,9 @@ const TaskEditScreen = ({ navigation, route }) => {
             ) : (
               <TickIcon fill={'#FFEAA1'} width={sw(25)} height={sw(25)} />
             )}
-            <Text style={styles.beSubtaskText}>Completed</Text>
+            <Text style={styles.beSubtaskText}>
+              {t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.COMPLETED')}
+            </Text>
           </View>
         </AppPressable>
         {recentTaskList.length > 1 && (
@@ -175,7 +177,9 @@ const TaskEditScreen = ({ navigation, route }) => {
                 ) : (
                   <TickIcon fill={'#FFEAA1'} width={sw(25)} height={sw(25)} />
                 )}
-                <Text style={styles.beSubtaskText}>Be a subtask under:</Text>
+                <Text style={styles.beSubtaskText}>
+                  {t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.BE_A_SUBTASK')}
+                </Text>
               </View>
             </AppPressable>
             {isSelectSubTask && (
@@ -194,7 +198,7 @@ const TaskEditScreen = ({ navigation, route }) => {
         <View
           style={{ ...styles.btnView, zIndex: isItemExtendPressed ? -1 : 100 }}>
           <AppButton
-            text={'Done'}
+            text={t('BTTONS.DONE')}
             onPress={onDoneBtnPressed}
             disabled={
               !inputTitle || (isSelectSubTask && !selectedSubTaskUnder)

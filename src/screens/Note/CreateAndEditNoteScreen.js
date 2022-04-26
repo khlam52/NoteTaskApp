@@ -291,7 +291,7 @@ const CreateAndEditNoteScreen = ({ navigation, route }) => {
         }}
         style={getItemFontFormat(item, index)}
         multiline={true}
-        placeholder={'Add Text...'}
+        placeholder={t('SCREENS.NOTE_CREATE_AND_EDIT_SCREEN.ADD_TEXT')}
         placeholderTextColor={'#B6B6B6'}
         onBlur={() => {
           setIsShowFontIcon(false);
@@ -346,7 +346,7 @@ const CreateAndEditNoteScreen = ({ navigation, route }) => {
             )}
             {/* {Platform.OS === 'ios' ? <IosShareIcon /> : <AosShareIcon />} */}
             <AppPressable onPress={onDonePressed}>
-              <Text style={styles.doneText}>Done</Text>
+              <Text style={styles.doneText}>{t('BTTONS.DONE')}</Text>
             </AppPressable>
           </View>
         }
@@ -359,7 +359,7 @@ const CreateAndEditNoteScreen = ({ navigation, route }) => {
           <TextInput
             value={inputTitle}
             onChangeText={onChangeTitle}
-            placeholder={'Input Title'}
+            placeholder={t('SCREENS.NOTE_CREATE_AND_EDIT_SCREEN.INPUT_TITLE')}
             style={styles.inputTitleText}
             placeholderTextColor={'#B6B6B6'}
           />

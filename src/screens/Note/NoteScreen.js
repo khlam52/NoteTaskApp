@@ -210,7 +210,9 @@ const NoteScreen = ({ navigation }) => {
             ) : (
               <UnTickIcon stroke={'#FFEAA1'} width={sw(25)} height={sw(25)} />
             )}
-            <Text style={styles.selectAllText}>Select All</Text>
+            <Text style={styles.selectAllText}>
+              {t('SCREENS.NOTE_SCREEN.SELECT_ALL')}
+            </Text>
           </View>
         </AppPressable>
 
@@ -234,7 +236,7 @@ const NoteScreen = ({ navigation }) => {
   const noResultScreen = () => (
     <View style={{ alignItems: 'center', marginTop: sw(150) }}>
       <NoNoteIcon />
-      <Text style={styles.addNoteText}>Add Note</Text>
+      <Text style={styles.addNoteText}>{t('SCREENS.NOTE_SCREEN.NO_NOTE')}</Text>
     </View>
   );
 
@@ -242,7 +244,7 @@ const NoteScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <BaseHeader notShowBackIcon={true} />
       <View style={styles.container}>
-        <Text style={styles.text}>Notes</Text>
+        <Text style={styles.text}>{t('SCREENS.NOTE_SCREEN.TITLE')}</Text>
         {isItemLongPressed && renderSelectAllView()}
         <FlatList
           data={noteList}

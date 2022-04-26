@@ -132,10 +132,80 @@ const deleteTaskFunc = async (
   }
 };
 
+const getZhhkMonth = (month) => {
+  switch (month) {
+    case 'January':
+      return 1;
+    case 'February':
+      return 2;
+    case 'March':
+      return 3;
+    case 'April':
+      return 4;
+    case 'May':
+      return 5;
+    case 'June':
+      return 6;
+    case 'July':
+      return 7;
+    case 'August':
+      return 8;
+    case 'September':
+      return 9;
+    case 'October':
+      return 10;
+    case 'November':
+      return 11;
+    case 'December':
+      return 12;
+  }
+};
+
+const getZhhkWeekdayList = (weekday) => {
+  switch (weekday) {
+    case 'Mon':
+      return '一';
+    case 'Tue':
+      return '二';
+    case 'Wed':
+      return '三';
+    case 'Thu':
+      return '四';
+    case 'Fri':
+      return '五';
+    case 'Sat':
+      return '六';
+    case 'Sun':
+      return '日';
+  }
+};
+
+const getZhhkTimeFormat = (date, locale) => {
+  let splitdate = date.split(' ');
+  console.log('splitdate:', splitdate);
+  console.log('locale:', locale);
+  if (locale === 'zh-Hant') {
+    let year = splitdate[2].replace(/,/g, '');
+    return (
+      year +
+      '年' +
+      getZhhkMonth(splitdate[1]) +
+      '月' +
+      splitdate[0] +
+      '日星期' +
+      getZhhkWeekdayList(splitdate[3]) +
+      ' ' +
+      splitdate[4]
+    );
+  }
+  return date;
+};
+
 export default {
   getTaskList,
   restructureTaskListFunc,
   reCorrectTaskList,
   reCorrectTaskListBySubtask,
   deleteTaskFunc,
+  getZhhkTimeFormat,
 };

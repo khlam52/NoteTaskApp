@@ -13,6 +13,10 @@ const getMomentDate = (
   local = 'en',
 ) => {
   let returnDate = 'N/A';
+  if (i18n.locale === 'zh-Hant' || i18n.locale === 'zh-Hans') {
+    local = 'zh-hk';
+    dateFormat = 'llll';
+  }
 
   if (date && preSetDateFormat) {
     returnDate =

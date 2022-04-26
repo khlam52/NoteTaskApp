@@ -58,6 +58,10 @@ const TaskScreen = ({ navigation }) => {
   };
 
   const renderSectionHeader = ({ section: { groupName, data } }) => {
+    let name = t('SCREENS.TASK_SCREEN.COMPLETED');
+    if (groupName === 'In Progress') {
+      name = t('SCREENS.TASK_SCREEN.IN_PROGRESS');
+    }
     let Datalength = 0;
     data.map((item) => {
       let node = _.get(item, 'node', '');
@@ -67,9 +71,7 @@ const TaskScreen = ({ navigation }) => {
     });
     return (
       <View>
-        <Text style={styles.groupNameText}>
-          {groupName + ' - ' + Datalength}
-        </Text>
+        <Text style={styles.groupNameText}>{name + Datalength}</Text>
       </View>
     );
   };
@@ -105,7 +107,7 @@ const TaskScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <BaseHeader notShowBackIcon={true} />
       <View style={styles.container}>
-        <Text style={styles.text}>Tasks</Text>
+        <Text style={styles.text}>{t('SCREENS.TASK_SCREEN.TITLE')}</Text>
 
         <SectionList
           style={styles.sectionList}

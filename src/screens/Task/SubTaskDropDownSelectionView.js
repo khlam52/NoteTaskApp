@@ -90,7 +90,7 @@ export default function SubTaskDropDownSelectionView({
           <Text style={styles.taskText}>
             {selectedSubTaskUnder
               ? selectedSubTaskUnder.title
-              : '-- under which task --'}
+              : t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.UNDER_WHICH_TASK')}
           </Text>
           {!isItemExtendPressed ? (
             <ArrowDownIcon fill={'#FFEAA1'} />

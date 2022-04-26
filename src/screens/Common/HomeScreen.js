@@ -57,12 +57,12 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.text}>Note Space</Text>
         <Text style={styles.versionText}>v 1.0.0</Text>
         {renderCreateItemView(
-          'Create Task',
+          t('SCREENS.HOME_SCREEN.CREATE_TASK'),
           <CreateTaskIcon />,
           goTaskCreateScreen,
         )}
         {renderCreateItemView(
-          'Create Note',
+          t('SCREENS.HOME_SCREEN.CREATE_NOTE'),
           <CreateNoteIcon />,
           goNoteCreateScreen,
         )}

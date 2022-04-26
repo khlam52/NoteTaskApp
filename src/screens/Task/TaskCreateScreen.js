@@ -107,7 +107,7 @@ const TaskCreateScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <BaseHeader title={'Create Task'} />
+      <BaseHeader title={t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.TITLE')} />
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         scrollEnabled={true}
@@ -116,7 +116,7 @@ const TaskCreateScreen = ({ navigation }) => {
         <TextInput
           value={inputTitle}
           onChangeText={onChangeTitle}
-          placeholder={'Input Task Title'}
+          placeholder={t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.INPUT_TITLE')}
           style={styles.inputTitleText}
           placeholderTextColor={'#B6B6B6'}
         />
@@ -127,7 +127,7 @@ const TaskCreateScreen = ({ navigation }) => {
           <TextInput
             value={inputContent}
             onChangeText={onChangeContent}
-            placeholder={'Add description...'}
+            placeholder={t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.ADD_DESC')}
             style={styles.inputContentText}
             multiline={true}
             placeholderTextColor={'#B6B6B6'}
@@ -146,7 +146,9 @@ const TaskCreateScreen = ({ navigation }) => {
                 ) : (
                   <TickIcon fill={'#FFEAA1'} width={sw(25)} height={sw(25)} />
                 )}
-                <Text style={styles.beSubtaskText}>Be a subtask under:</Text>
+                <Text style={styles.beSubtaskText}>
+                  {t('SCREENS.TASK_CREATE_AND_EDIT_SCREEN.BE_A_SUBTASK')}
+                </Text>
               </View>
             </AppPressable>
             {isSelectSubTask && (
@@ -165,7 +167,7 @@ const TaskCreateScreen = ({ navigation }) => {
         <View
           style={{ ...styles.btnView, zIndex: isItemExtendPressed ? -1 : 100 }}>
           <AppButton
-            text={'Create'}
+            text={t('BTTONS.CREATE')}
             onPress={onCreateBtnPressed}
             disabled={
               !inputTitle || (isSelectSubTask && !selectedSubTaskUnder)
