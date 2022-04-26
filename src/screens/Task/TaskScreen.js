@@ -78,7 +78,7 @@ const TaskScreen = ({ navigation }) => {
     showAnimationView();
     let isCompleted = groupName === 'Completed' ? true : false;
 
-    const onTickIconPressed = () => {
+    const onTickIconPressed = async () => {
       isCompleted = !isCompleted;
       recentTaskList.map((selectedItem) => {
         // Parent Item
@@ -87,7 +87,7 @@ const TaskScreen = ({ navigation }) => {
             isCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
         }
       });
-      TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
+      await TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
     };
 
     return (
@@ -100,12 +100,6 @@ const TaskScreen = ({ navigation }) => {
       />
     );
   };
-
-  const noResultScreen = () => (
-    <View style={{ alignItems: 'center', marginTop: sw(150) }}>
-      <Text style={styles.infoText}>No Result !</Text>
-    </View>
-  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -130,7 +124,6 @@ const TaskScreen = ({ navigation }) => {
               />
             );
           }}
-          // ListEmptyComponent={noResultScreen}
         />
       </View>
     </View>

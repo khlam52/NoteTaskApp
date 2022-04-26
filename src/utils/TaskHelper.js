@@ -12,17 +12,17 @@ const getTaskList = async (loadRecentTaskList) => {
   }
 };
 
-const reCorrectTaskList = (recentTaskList, loadRecentTaskList) => {
-  recentTaskList.map((item, index) => {
+const reCorrectTaskList = async (taskList, loadRecentTaskList) => {
+  taskList.map((item, index) => {
     let subTaskList = [];
     let completedLists = [];
     if (item.node === 1) {
-      subTaskList = _.filter(recentTaskList, { parentUid: item.uid });
+      subTaskList = _.filter(taskList, { parentUid: item.uid });
       completedLists = _.filter(subTaskList, {
         status: 'COMPLETED',
       });
       if (item.status === 'COMPLETED') {
-        recentTaskList.map((subItem) => {
+        taskList.map((subItem) => {
           if (subItem.parentUid === item.uid) {
             subItem.status = 'COMPLETED';
           }
@@ -32,7 +32,7 @@ const reCorrectTaskList = (recentTaskList, loadRecentTaskList) => {
         item.status === 'IN_PROGRESS' &&
         subTaskList.length === completedLists.length
       ) {
-        recentTaskList.map((subItem) => {
+        taskList.map((subItem) => {
           if (subItem.parentUid === item.uid) {
             subItem.status = 'IN_PROGRESS';
           }
@@ -40,16 +40,16 @@ const reCorrectTaskList = (recentTaskList, loadRecentTaskList) => {
       }
     }
   });
-  StorageService.setTaskList(recentTaskList);
-  getTaskList(loadRecentTaskList);
+  StorageService.setTaskList(taskList);
+  await getTaskList(loadRecentTaskList);
 };
 
-const reCorrectTaskListBySubtask = (recentTaskList, loadRecentTaskList) => {
-  recentTaskList.map((item, index) => {
+const reCorrectTaskListBySubtask = async (taskList, loadRecentTaskList) => {
+  taskList.map((item, index) => {
     let subTaskList = [];
     let completedLists = [];
     if (item.node === 1) {
-      subTaskList = _.filter(recentTaskList, { parentUid: item.uid });
+      subTaskList = _.filter(taskList, { parentUid: item.uid });
       completedLists = _.filter(subTaskList, {
         status: 'COMPLETED',
       });
@@ -66,8 +66,8 @@ const reCorrectTaskListBySubtask = (recentTaskList, loadRecentTaskList) => {
       }
     }
   });
-  StorageService.setTaskList(recentTaskList);
-  getTaskList(loadRecentTaskList);
+  StorageService.setTaskList(taskList);
+  await getTaskList(loadRecentTaskList);
 };
 
 // Restructure the Task list
@@ -109,7 +109,7 @@ const restructureTaskListFunc = (
   console.log('restructureTaskList:', restructureTaskList);
 };
 
-const deleteTaskFunc = (
+const deleteTaskFunc = async (
   recentTaskList,
   loadRecentTaskList,
   item,
@@ -117,23 +117,18 @@ const deleteTaskFunc = (
   isSubTask = false,
 ) => {
   console.log('subItem:', item);
-  let newTaskList = [...recentTaskList];
-  recentTaskList.map((deleteItem, deleteIndex) => {
-    if (item.uid === deleteItem.uid) {
-      newTaskList.splice(deleteIndex, 1);
-    }
-    if (!isSubTask) {
-      if (item.uid === deleteItem.parentUid) {
-        console.log('deleteItem:', deleteItem);
-        newTaskList.splice(deleteIndex, 1);
-      }
-    }
-  });
-  console.log('newTaskList:', newTaskList);
+  let taskList = [...recentTaskList];
+  console.log('taskList before:', taskList);
+
+  let deleteTaskList = _.reject(taskList, { uid: item.uid });
+  if (!isSubTask) {
+    deleteTaskList = _.reject(deleteTaskList, { parentUid: item.uid });
+  }
+  console.log('deleteTaskList:', deleteTaskList);
   if (isSubTask) {
-    reCorrectTaskListBySubtask(newTaskList, loadRecentTaskList);
+    await reCorrectTaskListBySubtask(deleteTaskList, loadRecentTaskList);
   } else {
-    reCorrectTaskList(newTaskList, loadRecentTaskList);
+    await reCorrectTaskList(deleteTaskList, loadRecentTaskList);
   }
 };
 

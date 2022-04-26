@@ -95,7 +95,7 @@ const TaskEditScreen = ({ navigation, route }) => {
     setIsCompleted(!isCompleted);
   };
 
-  const onDoneBtnPressed = () => {
+  const onDoneBtnPressed = async () => {
     recentTaskList.map((item, index) => {
       if (item.uid === selecteduid) {
         item.title = inputTitle;
@@ -113,9 +113,12 @@ const TaskEditScreen = ({ navigation, route }) => {
       }
     });
     if (node === 1) {
-      TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
+      await TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
     } else {
-      TaskHelper.reCorrectTaskListBySubtask(recentTaskList, loadRecentTaskList);
+      await TaskHelper.reCorrectTaskListBySubtask(
+        recentTaskList,
+        loadRecentTaskList,
+      );
     }
 
     navigation.goBack();

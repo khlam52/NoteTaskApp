@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import _ from 'lodash';
@@ -55,6 +55,8 @@ export default function TaskItemView({
     (action) => action.user.loadRecentTaskList,
   );
 
+  const onSwipeClose = useRef();
+
   const [isItemExtendPressed, setIsItemExtendPressed] = useState(false);
 
   const onItemExtendPress = () => {
@@ -76,13 +78,14 @@ export default function TaskItemView({
     });
     return (
       <AppPressable
-        onPress={() => {
-          TaskHelper.deleteTaskFunc(
+        onPress={async () => {
+          await TaskHelper.deleteTaskFunc(
             recentTaskList,
             loadRecentTaskList,
             item,
             index,
           );
+          onSwipeClose.current.close();
         }}>
         <Animated.View
           style={{
@@ -98,14 +101,19 @@ export default function TaskItemView({
   let node = _.get(item, 'node', '');
   return (
     node === 1 && (
-      <View>
-        <Swipeable renderRightActions={renderRightActions} friction={2}>
+      <View key={index}>
+        <Swipeable
+          renderRightActions={renderRightActions}
+          ref={onSwipeClose}
+          friction={2}
+          key={index}>
           <AppPressable
             onPress={() => {
               onItemPressed(item);
             }}
+            key={index}
             customDisabledStyle={{ opacity: 1 }}>
-            <View key={index} style={styles.itemView}>
+            <Animated.View key={index} style={styles.itemView}>
               <View style={styles.itemLeftRowView}>
                 <AppPressable onPress={onTickIconPressed}>
                   {isCompleted ? (
@@ -128,7 +136,7 @@ export default function TaskItemView({
                   <ArrowRightIcon fill={'#FFF'} />
                 )}
               </AppPressable>
-            </View>
+            </Animated.View>
           </AppPressable>
         </Swipeable>
 
@@ -147,7 +155,7 @@ export default function TaskItemView({
                     isSubTaskCompleted === true ? 'COMPLETED' : 'IN_PROGRESS';
                 }
               });
-              TaskHelper.reCorrectTaskListBySubtask(
+              await TaskHelper.reCorrectTaskListBySubtask(
                 recentTaskList,
                 loadRecentTaskList,
               );
@@ -161,14 +169,15 @@ export default function TaskItemView({
               });
               return (
                 <AppPressable
-                  onPress={() => {
-                    TaskHelper.deleteTaskFunc(
+                  onPress={async () => {
+                    await TaskHelper.deleteTaskFunc(
                       recentTaskList,
                       loadRecentTaskList,
                       subItem,
                       subIndex,
                       true,
                     );
+                    onSwipeClose.current.close();
                   }}>
                   <Animated.View
                     style={{
@@ -184,11 +193,14 @@ export default function TaskItemView({
             return (
               <Swipeable
                 renderRightActions={renderSubItemRightActions}
-                friction={2}>
+                ref={onSwipeClose}
+                friction={2}
+                key={subIndex}>
                 <AppPressable
                   onPress={() => {
                     onItemPressed(subItem);
                   }}
+                  key={subIndex}
                   customDisabledStyle={{ opacity: 1 }}>
                   <View
                     key={subIndex}

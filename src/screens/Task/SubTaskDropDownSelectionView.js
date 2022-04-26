@@ -101,7 +101,7 @@ export default function SubTaskDropDownSelectionView({
       </AppPressable>
       <ScrollView
         style={{
-          height: sw(150),
+          maxHeight: sw(150),
           borderBottomLeftRadius: sw(20),
           borderBottomRightRadius: sw(20),
         }}

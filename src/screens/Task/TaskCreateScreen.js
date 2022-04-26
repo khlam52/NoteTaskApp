@@ -68,7 +68,7 @@ const TaskCreateScreen = ({ navigation }) => {
     setIsSelectSubTask(!isSelectSubTask);
   };
 
-  const onCreateBtnPressed = () => {
+  const onCreateBtnPressed = async () => {
     let data = {
       title: inputTitle,
       content: inputContent,
@@ -93,9 +93,12 @@ const TaskCreateScreen = ({ navigation }) => {
     TaskHelper.getTaskList(loadRecentTaskList);
 
     if (isSelectSubTask && selectedSubTaskUnder) {
-      TaskHelper.reCorrectTaskListBySubtask(recentTaskList, loadRecentTaskList);
+      await TaskHelper.reCorrectTaskListBySubtask(
+        recentTaskList,
+        loadRecentTaskList,
+      );
     } else {
-      TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
+      await TaskHelper.reCorrectTaskList(recentTaskList, loadRecentTaskList);
     }
 
     navigation.goBack();
@@ -127,7 +130,7 @@ const TaskCreateScreen = ({ navigation }) => {
             placeholderTextColor={'#B6B6B6'}
           />
         </View>
-        {recentTaskList !== [] && (
+        {recentTaskList.length !== 0 && (
           <View>
             <AppPressable onPress={onSubTaskUnderPressed}>
               <View style={styles.beSubtaskView}>
