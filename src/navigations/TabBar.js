@@ -1,7 +1,12 @@
 import React from 'react';
 
 import { BlurView } from '@react-native-community/blur';
-import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import {
+  View,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { NavNoteIcon, NavTaskIcon, PlusIcon } from '../assets/images';
@@ -49,22 +54,25 @@ export default function TabBar({ state, descriptors, navigation }) {
 
   return (
     <View style={styles.tabBarContainer}>
-      <BlurView
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          top: 0,
-          right: 0,
-          left: 0,
-          borderTopRightRadius: sw(20),
-          borderTopLeftRadius: sw(20),
-          overflow: 'hidden',
-          borderRadius: sw(20),
-        }}
-        blurType="dark"
-        blurAmount={10}
-        reducedTransparencyFallbackColor="white"
-      />
+      {Platform.OS === 'ios' && (
+        <BlurView
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            top: 0,
+            right: 0,
+            left: 0,
+            borderTopRightRadius: sw(20),
+            borderTopLeftRadius: sw(20),
+            overflow: 'hidden',
+            borderRadius: sw(20),
+          }}
+          blurType="dark"
+          blurAmount={10}
+          reducedTransparencyFallbackColor="white"
+        />
+      )}
+
       {/* <Svg
         version="1.1"
         id="bottom-bar"
@@ -140,7 +148,7 @@ const getStyle = (insets, { theme, themeName }) => {
       bottom: 0,
       width: '100%',
       flexDirection: 'row',
-      //   backgroundColor: '#3A3A3E99',
+      backgroundColor: Platform.OS !== 'ios' ? '#29292B' : null,
       paddingHorizontal: sw(30),
       justifyContent: 'space-between',
       height:
@@ -151,6 +159,8 @@ const getStyle = (insets, { theme, themeName }) => {
       shadowRadius: 4.0,
       paddingTop: sw(7),
       paddingBottom: insets.bottom > 0 ? insets.bottom : sw(theme.spacings.s2),
+      borderTopRightRadius: sw(20),
+      borderTopLeftRadius: sw(20),
     },
     tabItemContainer: {
       width: sw(80),

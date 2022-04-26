@@ -10,6 +10,7 @@ import {
   LayoutAnimation,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
 import { TickIcon, UnTickIcon } from '../../assets/images';
@@ -136,6 +137,7 @@ const TaskEditScreen = ({ navigation, route }) => {
           onChangeText={onChangeTitle}
           placeholder={'Input Task Title'}
           style={styles.inputTitleText}
+          placeholderTextColor={'#B6B6B6'}
         />
         <Text style={styles.dateText}>{inputDate}</Text>
         <View style={styles.contentView}>
@@ -158,31 +160,37 @@ const TaskEditScreen = ({ navigation, route }) => {
             <Text style={styles.beSubtaskText}>Completed</Text>
           </View>
         </AppPressable>
-        <View>
-          <AppPressable
-            onPress={onSubTaskUnderPressed}
-            disabled={selectedSubTaskList.length === 0 ? false : true}>
-            <View style={styles.beSubtaskView}>
-              {!isSelectSubTask ? (
-                <UnTickIcon stroke={'#FFEAA1'} width={sw(25)} height={sw(25)} />
-              ) : (
-                <TickIcon fill={'#FFEAA1'} width={sw(25)} height={sw(25)} />
-              )}
-              <Text style={styles.beSubtaskText}>Be a subtask under:</Text>
-            </View>
-          </AppPressable>
-          {isSelectSubTask && (
-            <View style={styles.subTaskDropDownView}>
-              <SubTaskDropDownSelectionView
-                selectedSubTaskUnder={selectedSubTaskUnder}
-                setSelectedSubTaskUnder={setSelectedSubTaskUnder}
-                setIsItemExtendPressed={setIsItemExtendPressed}
-                isItemExtendPressed={isItemExtendPressed}
-                selecteduid={selecteduid}
-              />
-            </View>
-          )}
-        </View>
+        {recentTaskList.length > 1 && (
+          <View>
+            <AppPressable
+              onPress={onSubTaskUnderPressed}
+              disabled={selectedSubTaskList.length === 0 ? false : true}>
+              <View style={styles.beSubtaskView}>
+                {!isSelectSubTask ? (
+                  <UnTickIcon
+                    stroke={'#FFEAA1'}
+                    width={sw(25)}
+                    height={sw(25)}
+                  />
+                ) : (
+                  <TickIcon fill={'#FFEAA1'} width={sw(25)} height={sw(25)} />
+                )}
+                <Text style={styles.beSubtaskText}>Be a subtask under:</Text>
+              </View>
+            </AppPressable>
+            {isSelectSubTask && (
+              <View style={styles.subTaskDropDownView}>
+                <SubTaskDropDownSelectionView
+                  selectedSubTaskUnder={selectedSubTaskUnder}
+                  setSelectedSubTaskUnder={setSelectedSubTaskUnder}
+                  setIsItemExtendPressed={setIsItemExtendPressed}
+                  isItemExtendPressed={isItemExtendPressed}
+                  selecteduid={selecteduid}
+                />
+              </View>
+            )}
+          </View>
+        )}
         <View
           style={{ ...styles.btnView, zIndex: isItemExtendPressed ? -1 : 100 }}>
           <AppButton
@@ -236,6 +244,7 @@ const getStyle = (theme) => {
     btnView: {
       alignItems: 'center',
       marginTop: sw(116),
+      marginBottom: sw(130),
       zIndex: -1,
     },
     beSubtaskView: {

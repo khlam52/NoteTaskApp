@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+import { useStoreActions, useStoreState } from 'easy-peasy';
 import {
   StyleSheet,
   View,
@@ -8,21 +9,21 @@ import {
   LayoutAnimation,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
+import { TickIcon, UnTickIcon } from '../../assets/images';
 import AppButton from '../../components/AppButton';
+import AppPressable from '../../components/AppPressable';
 import BaseHeader from '../../components/BaseHeader';
+import StorageService from '../../services/StorageService';
 import CommonUtil from '../../utils/CommonUtil';
+import TaskHelper from '../../utils/TaskHelper';
+import SubTaskDropDownSelectionView from './SubTaskDropDownSelectionView';
 import useLocalization from '~src/contexts/i18n';
 import { AppDefaultTheme } from '~src/contexts/theme/AppTheme';
 import { Typography } from '~src/styles';
 import { sw } from '~src/styles/Mixins';
-import { TickIcon, UnTickIcon } from '../../assets/images';
-import { v4 as uuidv4 } from 'uuid';
-import StorageService from '../../services/StorageService';
-import { useStoreActions, useStoreState } from 'easy-peasy';
-import SubTaskDropDownSelectionView from './SubTaskDropDownSelectionView';
-import AppPressable from '../../components/AppPressable';
-import TaskHelper from '../../utils/TaskHelper';
 
 const TaskCreateScreen = ({ navigation }) => {
   const { t, locale, setLocale } = useLocalization();
@@ -110,12 +111,14 @@ const TaskCreateScreen = ({ navigation }) => {
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         scrollEnabled={true}
+        enableOnAndroid={true}
         style={styles.container}>
         <TextInput
           value={inputTitle}
           onChangeText={onChangeTitle}
           placeholder={'Input Task Title'}
           style={styles.inputTitleText}
+          placeholderTextColor={'#B6B6B6'}
         />
         <Text style={styles.dateText}>
           {CommonUtil.getMomentDate(inputDate)}
@@ -212,6 +215,7 @@ const getStyle = (theme) => {
     btnView: {
       alignItems: 'center',
       marginTop: sw(116),
+      marginBottom: sw(130),
       zIndex: -1,
     },
     beSubtaskView: {

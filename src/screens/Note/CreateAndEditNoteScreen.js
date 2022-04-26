@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -360,6 +361,7 @@ const CreateAndEditNoteScreen = ({ navigation, route }) => {
             onChangeText={onChangeTitle}
             placeholder={'Input Title'}
             style={styles.inputTitleText}
+            placeholderTextColor={'#B6B6B6'}
           />
           <Text style={styles.dateText}>
             {isCreateNote ? CommonUtil.getMomentDate(inputDate) : inputDate}
