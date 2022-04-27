@@ -144,6 +144,7 @@ const getStyle = (theme) => {
       textAlign: 'center',
     },
     sectionList: {
+      paddingTop: sw(36),
       marginHorizontal: sw(20),
     },
     groupNameText: {
