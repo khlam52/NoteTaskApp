@@ -1,4 +1,10 @@
-# NoteAndTaskApp
+# Note Space
+
+## App Main Function
+
+- Drop Note
+- Create To Do Task List
+- Support CRUD
 
 # RNProject Template
 
@@ -125,40 +131,6 @@ Right after that line, add this function
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
     }
 }
-```
-
-## Can't show PDF in Non-Prod env
-
-`iOS`
-Search RNPDFView.m file in Xcode
-
-In that file you will see a line like this:
-
-```bash
-#pragma mark - webview delegate
-```
-
-Right after that line, add this function
-
-```bash
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler {
-    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-       NSLog(@"bundleIdentifier: %@", bundleIdentifier);
-       if ([bundleIdentifier rangeOfString:@".dev"].location != NSNotFound ||
-           [bundleIdentifier rangeOfString:@".uat"].location != NSNotFound) {
-           if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-               if (challenge.previousFailureCount == 0) {
-                   NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
-                   completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
-               } else {
-                   completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
-               }
-           }
-       }
-       else{
-           completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-       }
-  }
 ```
 
 ## Troubleshoot
