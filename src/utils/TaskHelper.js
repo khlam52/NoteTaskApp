@@ -184,7 +184,7 @@ const getZhhkTimeFormat = (date, locale) => {
   let splitdate = date.split(' ');
   console.log('splitdate:', splitdate);
   console.log('locale:', locale);
-  if (locale === 'zh-Hant') {
+  if (locale === 'zh-Hant' && splitdate.length > 2) {
     let year = splitdate[2].replace(/,/g, '');
     return (
       year +

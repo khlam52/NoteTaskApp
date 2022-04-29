@@ -130,7 +130,7 @@ const CreateAndEditNoteScreen = ({ navigation, route }) => {
     let data = {
       title: inputTitle,
       content: noteContentLayoutList,
-      createAt: inputDate,
+      createAt: CommonUtil.getMomentDate(inputDate),
       uid: isCreateNote ? uuidv4() : selectedUid,
     };
     if (isCreateNote) {

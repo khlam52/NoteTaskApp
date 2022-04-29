@@ -125,7 +125,14 @@ export default function TaskItemView({
                 <Text style={styles.itemTitleText}>{item.title}</Text>
               </View>
 
-              <AppPressable onPress={onItemExtendPress}>
+              <AppPressable
+                onPress={
+                  item.subTask.length > 0
+                    ? onItemExtendPress
+                    : () => {
+                        onItemPressed(item);
+                      }
+                }>
                 {item.subTask.length > 0 ? (
                   !isItemExtendPressed ? (
                     <ArrowDownIcon fill={'#FFF'} />

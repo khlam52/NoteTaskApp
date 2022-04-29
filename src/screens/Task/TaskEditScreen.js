@@ -64,6 +64,10 @@ const TaskEditScreen = ({ navigation, route }) => {
   );
 
   useEffect(() => {
+    setInputDate(TaskHelper.getZhhkTimeFormat(inputDate, locale));
+  }, []);
+
+  useEffect(() => {
     console.log('recentTaskList:', recentTaskList);
     console.log('selectedItem:', selectedItem);
   }, []);
@@ -137,9 +141,7 @@ const TaskEditScreen = ({ navigation, route }) => {
           style={styles.inputTitleText}
           placeholderTextColor={'#B6B6B6'}
         />
-        <Text style={styles.dateText}>
-          {TaskHelper.getZhhkTimeFormat(inputDate, locale)}
-        </Text>
+        <Text style={styles.dateText}>{inputDate}</Text>
         <View style={styles.contentView}>
           <TextInput
             value={inputContent}
